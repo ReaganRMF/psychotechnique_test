@@ -222,6 +222,7 @@
         <div class="score-circle" id="final-score">0%</div>
         <p id="feedback-msg"></p>
         <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Recommencer la session</button>
+        <button class="btn" onclick="goToRandomTest()" style="margin-top: 14px; background:#10b981;">Tester un autre test</button>
     </div>
 </div>
 
@@ -427,6 +428,12 @@
         }
 
         document.getElementById('feedback-msg').innerText = `Vous avez obtenu ${score} bonnes réponses sur ${questions.length}. ${feedback}`;
+    }
+
+    const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html"];
+    function goToRandomTest() {
+        const choice = tests[Math.floor(Math.random() * tests.length)];
+        window.location.href = choice;
     }
 </script>
 
