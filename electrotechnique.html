@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Électrotechnique</title>
+    <style>body{font-family:Segoe UI,Arial,sans-serif;margin:24px;background:#f7fafc;color:#1f2937}</style>
+</head>
+<body>
+    <h1>Test – Électrotechnique</h1>
+    <p>Contenu du test d'électrotechnique. Ajoute ici les questions et la logique du quiz.</p>
+    <p>
+        <button onclick="goToRandomTest()">Tester un autre test</button>
+        <a href="index.html" style="margin-left:12px">Retour à l'accueil</a>
+    </p>
+
+    <script>
+        const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html", "electrotechnique.html", "entreprise.html", "psychologie.html"];
+        function goToRandomTest(){ window.location.href = tests[Math.floor(Math.random()*tests.length)]; }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur SNEL - Électricité Générale (Module 8)</title>
+    <style>
+        :root {
+            --primary-color: #e65c00; /* Orange Électrique / Énergie */
+            --secondary-color: #343a40; /* Gris industriel */
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --hover-color: #fff0e6;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --info-bg: #fff3cd;
+            --info-text: #856404;
+            --info-border: #ffeeba;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(230, 92, 0, 0.15);
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: var(--secondary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.selected {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct-ans {
+            background-color: var(--correct-color) !important;
+            color: white !important;
+            border-color: var(--correct-color) !important;
+        }
+
+        .option-btn.wrong-ans {
+            background-color: var(--wrong-color) !important;
+            color: white !important;
+            border-color: var(--wrong-color) !important;
+        }
+
+        .explanation-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary-color);
+            font-weight: 500;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .result-screen {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 10px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            color: var(--secondary-color);
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen">
+        <h1 style="text-align: center; color: var(--primary-color);">Module 8 : Électricité Générale</h1>
+        <p>Ce test est spécifiquement conçu pour les candidats au poste d'<strong>Électricien</strong>.</p>
+        <p>Il comprend <strong>50 questions techniques</strong> couvrant : les lois fondamentales, l'appareillage de protection, le courant alternatif, les machines électriques et la sécurité (habilitations).</p>
+        <p>Temps alloué : <strong>50 minutes</strong>.</p>
+        <button class="btn" onclick="startTest()">Démarrer l'évaluation technique</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="header">
+            <span id="question-counter">Question 1 / 50</span>
+            <span class="timer" id="timer">50:00</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-text" id="question-text">Chargement de la question...</div>
+        
+        <div class="options-grid" id="options-grid"></div>
+
+        <div id="explanation-box" class="explanation-box hidden"></div>
+
+        <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
+    </div>
+
+    <div id="result-screen" class="result-screen hidden">
+        <h2>Bilan Technique - Électricité</h2>
+        <p>Voici votre score d'aptitude technique :</p>
+        <div class="score-circle" id="final-score">0%</div>
+        <p id="feedback-msg"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Relancer le test technique</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // LOIS FONDAMENTALES ET GRANDEURS ÉLECTRIQUES
+        { q: "Quelle formule représente correctement la Loi d'Ohm ?", options: ["I = U x R", "U = R x I", "P = U x I", "R = U x P"], answer: 1, explanation: "La tension (U en Volts) est égale au produit de la résistance (R en Ohms) par l'intensité (I en Ampères)." },
+        { q: "La puissance électrique en courant continu se calcule par la formule :", options: ["P = U / I", "P = R x I²", "P = U x I²", "P = U x R"], answer: 1, explanation: "P = U x I. Sachant que U = R x I, on peut déduire que P = R x I x I, soit P = R x I² (Effet Joule)." },
+        { q: "Dans un circuit en série, quelle grandeur électrique reste identique en tout point ?", options: ["La tension", "La puissance", "La résistance", "L'intensité du courant"], answer: 3, explanation: "L'intensité (I) est la même partout dans un circuit en série. C'est la tension qui se divise." },
+        { q: "Quelle est l'unité de mesure de la capacité d'un condensateur ?", options: ["Le Henry (H)", "Le Tesla (T)", "Le Farad (F)", "Le Coulomb (C)"], answer: 2, explanation: "La capacité d'un condensateur s'exprime en Farad (F). L'inductance s'exprime en Henry (H)." },
+        { q: "Que stipule la Loi des Nœuds (1ère loi de Kirchhoff) ?", options: ["La somme des tensions dans une maille est nulle", "La somme des courants entrant dans un nœud est égale à la somme des courants sortant", "La résistance augmente avec la chaleur", "La puissance absorbée égale la puissance dissipée"], answer: 1, explanation: "La Loi des Nœuds concerne la conservation de la charge électrique : les courants qui entrent dans une intersection (nœud) doivent en ressortir." },
+        { q: "Si on place 3 résistances de 30 Ohms en parallèle, quelle est la résistance équivalente totale ?", options: ["90 Ohms", "10 Ohms", "30 Ohms", "0 Ohm"], answer: 1, explanation: "En parallèle, pour des résistances identiques, Req = R / nombre de résistances = 30 / 3 = 10 Ohms." },
+        { q: "Qu'est-ce que l'Effet Joule ?", options: ["La création d'un champ magnétique", "Le dégagement de chaleur provoqué par le passage d'un courant dans un conducteur", "L'augmentation de la tension", "L'apparition d'un arc électrique"], answer: 1, explanation: "L'effet Joule est la dissipation d'énergie sous forme de chaleur lorsque le courant traverse un matériau résistant." },
+        { q: "L'énergie électrique consommée par une installation est facturée en :", options: ["Kilowatt (kW)", "Joule (J)", "Kilovoltampère (kVA)", "Kilowattheure (kWh)"], answer: 3, explanation: "L'énergie (E = P x t) mesurée par les compteurs de la SNEL s'exprime en kilowattheures (kWh)." },
+        { q: "Quelle est l'unité de l'impédance (Z) dans un circuit alternatif ?", options: ["Le Watt", "L'Ohm", "Le Volt", "Le Hertz"], answer: 1, explanation: "L'impédance (Z), qui est l'équivalent de la résistance pour le courant alternatif (incluant les effets capacitifs et inductifs), s'exprime en Ohms." },
+        { q: "Si la tension aux bornes d'une résistance est doublée, que fait le courant qui la traverse ?", options: ["Il est divisé par deux", "Il reste identique", "Il double", "Il quadruple"], answer: 2, explanation: "D'après U = R x I, si R est constant et U est multiplié par 2, alors I doit obligatoirement être multiplié par 2." },
+
+        // COURANT ALTERNATIF ET TRIPHASÉ
+        { q: "En RDC, quelle est la fréquence standard du réseau électrique de la SNEL ?", options: ["60 Hz", "50 Hz", "100 Hz", "400 Hz"], answer: 1, explanation: "La RDC, comme la majorité de l'Afrique et de l'Europe, utilise une fréquence réseau de 50 Hertz." },
+        { q: "Dans un réseau triphasé basse tension (BT) classique 400V, quelle est la tension mesurée entre une Phase et le Neutre ?", options: ["230 V", "400 V", "110 V", "690 V"], answer: 0, explanation: "La tension simple (entre phase et neutre) est de 230 V. La tension composée (entre deux phases) est de 400 V (230 x √3)." },
+        { q: "Dans la formule de la puissance active en triphasé (P = U x I x √3 x cos φ), que représente 'cos φ' ?", options: ["Le rendement", "Le facteur de puissance", "Le déphasage de la tension", "Le glissement"], answer: 1, explanation: "Le cosinus phi (cos φ) représente le facteur de puissance, indiquant le déphasage entre la tension et le courant." },
+        { q: "Quelle puissance s'exprime en Voltampère-Réactif (VAR) ?", options: ["La puissance apparente (S)", "La puissance active (P)", "La puissance réactive (Q)", "La puissance thermique"], answer: 2, explanation: "La puissance réactive (Q), utilisée pour magnétiser les bobines (moteurs, transfos), s'exprime en VAR." },
+        { q: "Quel composant utilise-t-on industriellement pour relever (améliorer) un facteur de puissance trop bas ?", options: ["Un transformateur", "Une batterie de condensateurs", "Un redresseur", "Un rhéostat"], answer: 1, explanation: "Les condensateurs fournissent de l'énergie réactive, compensant ainsi l'énergie réactive consommée par les moteurs (selfs), ce qui améliore le cos φ." },
+        { q: "Que réalise un montage redresseur (pont de diodes) ?", options: ["Il transforme le courant continu en courant alternatif", "Il transforme le courant alternatif en courant continu", "Il abaisse la tension", "Il modifie la fréquence"], answer: 1, explanation: "Le redresseur convertit une tension alternative (AC) en une tension continue (DC)." },
+        { q: "Que réalise un onduleur ?", options: ["Il transforme le courant alternatif en courant continu", "Il transforme le courant continu en courant alternatif", "Il coupe le courant en cas de surcharge", "Il mesure la fréquence"], answer: 1, explanation: "L'onduleur fait le travail inverse du redresseur : il convertit le courant continu (DC, venant par ex. d'une batterie) en courant alternatif (AC)." },
+        { q: "Sur un oscilloscope, quelle est la forme d'onde de la tension délivrée par le réseau SNEL ?", options: ["Carrée", "Triangulaire", "Sinusoïdale", "Continue"], answer: 2, explanation: "La distribution d'énergie électrique en courant alternatif se fait sous forme d'une onde sinusoïdale parfaite." },
+        { q: "Un système triphasé est dit 'équilibré' si :", options: ["Il n'y a pas de fil neutre", "Les trois courants de ligne ont la même valeur efficace et le même déphasage", "La tension est de 230V", "Il est relié à la terre"], answer: 1, explanation: "Dans un système équilibré, les charges sont réparties également sur les 3 phases. Le courant circulant dans le neutre est alors théoriquement nul." },
+        { q: "L'ordre des phases (L1, L2, L3) détermine :", options: ["La tension du réseau", "Le sens de rotation d'un moteur asynchrone triphasé", "La fréquence du réseau", "Le facteur de puissance"], answer: 1, explanation: "Inverser deux phases sur les bornes d'un moteur asynchrone triphasé inverse son sens de rotation." },
+
+        // APPAREILLAGE ET PROTECTION
+        { q: "Quel est le rôle principal d'un sectionneur ?", options: ["Couper le courant en cas de court-circuit", "Isoler visiblement et mécaniquement une partie du circuit pour assurer la sécurité", "Protéger contre les surcharges", "Mesurer la tension"], answer: 1, explanation: "Le sectionneur isole le circuit. Attention : un sectionneur standard ne doit JAMAIS être ouvert ou fermé en charge (quand le courant circule)." },
+        { q: "Le déclencheur magnétique d'un disjoncteur magnéto-thermique protège contre :", options: ["Les surcharges légères prolongées", "Les courts-circuits (surintensité brutale)", "Les fuites de courant à la terre", "Les baisses de tension"], answer: 1, explanation: "Le relais magnétique réagit instantanément à un très fort courant (court-circuit). Le relais thermique, lui, réagit lentement à une surcharge." },
+        { q: "Quel appareil protège spécifiquement les personnes contre les contacts indirects (fuite de courant vers la carcasse) ?", options: ["Le fusible AM", "Le contacteur", "Le disjoncteur ou interrupteur différentiel", "Le parafoudre"], answer: 2, explanation: "Le dispositif différentiel (DDR) compare le courant entrant et sortant. S'il y a une différence (fuite à la terre), il coupe l'alimentation pour sauver la vie de la personne." },
+        { q: "À quoi sert un relais thermique ?", options: ["Protéger les moteurs contre les surcharges faibles et prolongées", "Ouvrir et fermer le circuit de puissance", "Protéger contre les courts-circuits", "Protéger contre la foudre"], answer: 0, explanation: "Le relais thermique détecte l'échauffement anormal dû à une surcharge (ex: moteur qui force) et coupe le circuit de commande du contacteur." },
+        { q: "Qu'est-ce qu'un contacteur ?", options: ["Un appareil de mesure", "Un relais électromagnétique permettant de commander à distance des circuits de forte puissance", "Une protection contre les surtensions", "Un type de transformateur"], answer: 1, explanation: "Le contacteur est l'organe de commande par excellence. Une petite tension sur sa bobine permet de fermer des contacts de grande puissance (pour démarrer un moteur, par exemple)." },
+        { q: "Que signifie le marquage 'aM' sur un fusible ?", options: ["Action Moyenne", "Accompagnement Moteur", "Ampérage Maximal", "Arc Magnétique"], answer: 1, explanation: "Les fusibles aM (Accompagnement Moteur) sont conçus pour supporter la forte pointe de courant au démarrage d'un moteur sans fondre." },
+        { q: "Dans un schéma électrique, la lettre 'Q' désigne généralement :", options: ["Un moteur", "Un contacteur de puissance", "Un appareil de protection ou de sectionnement (disjoncteur, sectionneur)", "Une lampe"], answer: 2, explanation: "Selon la norme de repérage, Q = appareil de protection (disjoncteurs, sectionneurs). K = contacteurs, M = moteurs, F = fusibles/relais thermiques." },
+        { q: "Quel est le risque principal lors de l'ouverture d'un circuit fortement inductif en charge ?", options: ["Une baisse de tension", "La création d'un arc électrique de rupture très violent", "Une surchauffe du neutre", "La baisse de la fréquence"], answer: 1, explanation: "Les bobines s'opposent aux variations de courant. Couper brusquement crée une forte surtension qui provoque un arc électrique dangereux aux bornes des contacts." },
+        { q: "Quelle est la couleur réglementaire du fil de Neutre en basse tension ?", options: ["Rouge", "Vert/Jaune", "Bleu clair", "Noir"], answer: 2, explanation: "Le Bleu est réservé au Neutre. Le Vert/Jaune est réservé au conducteur de protection (Terre). Les autres couleurs (rouge, marron, noir) sont pour les phases." },
+        { q: "Pour mesurer l'intensité du courant circulant dans un fil sans avoir à le débrancher, on utilise :", options: ["Un Voltmètre", "Un Mégohmmètre", "Une Pince ampèremétrique", "Un Fréquencemètre"], answer: 2, explanation: "La pince ampèremétrique utilise le champ magnétique généré par le fil pour mesurer le courant qui y circule, sans contact électrique direct." },
+
+        // MACHINES ÉLECTRIQUES (TRANSFOS ET MOTEURS)
+        { q: "Quel est le rôle principal d'un transformateur ?", options: ["Convertir le continu en alternatif", "Modifier les valeurs de tension et de courant alternatif en conservant la fréquence et la puissance apparente", "Stocker de l'énergie", "Améliorer le cosinus phi"], answer: 1, explanation: "Un transformateur abaisse ou élève la tension alternative (U) tout en variant inversement le courant (I), sans changer la fréquence." },
+        { q: "De quoi est composé le circuit magnétique d'un transformateur ?", options: ["De cuivre pur", "De tôles d'acier au silicium feuilletées", "De plastique isolant", "D'aluminium massif"], answer: 1, explanation: "Le feuilletage des tôles permet de réduire massivement les pertes par courants de Foucault." },
+        { q: "Dans un moteur asynchrone triphasé, qu'est-ce que le 'glissement' ?", options: ["Le frottement des roulements", "La différence entre la vitesse de synchronisme (champ tournant) et la vitesse réelle du rotor", "La perte de tension dans les câbles", "Le déphasage tension/courant"], answer: 1, explanation: "Le rotor d'un moteur asynchrone tourne toujours un peu moins vite que le champ magnétique du stator. Cette différence de vitesse est le glissement." },
+        { q: "Comment s'appelle la partie fixe d'un moteur électrique ?", options: ["Le rotor", "Le collecteur", "Le stator", "L'induit"], answer: 2, explanation: "Le stator est la partie statique (fixe) qui contient les bobinages générant le champ tournant. Le rotor est la partie rotative." },
+        { q: "Pour un moteur dont la plaque signalétique indique 230V/400V, alimenté par un réseau SNEL 400V (entre phases), quel couplage devez-vous réaliser ?", options: ["Couplage Étoile", "Couplage Triangle", "Couplage en Série", "Peu importe"], answer: 0, explanation: "La tension réseau (400V) correspond à la plus grande tension du moteur. Il faut donc brancher les bobines en Étoile pour qu'elles ne reçoivent que 230V chacune (400/√3)." },
+        { q: "A quoi sert le couplage Étoile-Triangle au démarrage d'un gros moteur ?", options: ["A augmenter sa vitesse", "A réduire le fort courant d'appel lors du démarrage", "A le faire tourner à l'envers", "A le transformer en générateur"], answer: 1, explanation: "Le démarrage étoile-triangle permet de diviser l'intensité de démarrage (et le couple) par 3, évitant de faire disjoncter l'installation." },
+        { q: "Dans un transformateur abaisseur, l'enroulement primaire a :", options: ["Moins de spires (tours) que le secondaire", "Autant de spires que le secondaire", "Plus de spires (tours) que le secondaire", "Aucun fil"], answer: 2, explanation: "Le rapport de transformation (m = U2/U1 = N2/N1). Si la tension baisse, c'est qu'il y a moins de tours (spires) au secondaire (N2) qu'au primaire (N1)." },
+        { q: "Quel est l'appareil utilisé pour vérifier l'isolement des câbles d'un moteur ?", options: ["Un multimètre classique", "Un mégohmmètre (Megger)", "Un luxmètre", "Un tachymètre"], answer: 1, explanation: "Le mégohmmètre injecte une haute tension continue (ex: 500V ou 1000V) pour vérifier que la résistance de l'isolant est très élevée (en Mégohms)." },
+        { q: "Sur un transformateur HT/BT de cabine, à quoi sert le relais Buchholz ?", options: ["A mesurer le courant de sortie", "A détecter des défauts internes (dégagement de gaz ou baisse d'huile)", "A changer le couplage", "A refroidir les bobines"], answer: 1, explanation: "Le Buchholz est une protection vitale sur les gros transformateurs immergés dans l'huile, il réagit à l'accumulation de gaz due à un arc interne ou à une fuite." },
+        { q: "Dans un alternateur (comme à Inga), l'énergie mécanique de la turbine est convertie en :", options: ["Énergie chimique", "Énergie lumineuse", "Énergie thermique", "Énergie électrique"], answer: 3, explanation: "L'alternateur est un générateur qui convertit la rotation mécanique en courant électrique alternatif." },
+
+        // SÉCURITÉ ET MESURES (HABILITATIONS)
+        { q: "Que signifie l'acronyme EPI ?", options: ["Équipement de Puissance Isolée", "Équipement de Protection Individuelle", "Énergie Potentielle Inductive", "Étude des Pannes Internes"], answer: 1, explanation: "Les EPI incluent le casque, les gants isolants, les chaussures de sécurité, les lunettes, indispensables pour un électricien." },
+        { q: "Quelle est la toute première étape de la procédure de consignation électrique ?", options: ["La condamnation", "La séparation (ou sectionnement)", "La Vérification d'Absence de Tension (VAT)", "La mise à la terre"], answer: 1, explanation: "La procédure stricte : 1. Séparation (coupure visible) / 2. Condamnation (cadenas) / 3. Identification / 4. VAT / 5. Mise à la Terre (MALT)." },
+        { q: "L'outil obligatoire pour effectuer une VAT (Vérification d'Absence de Tension) est :", options: ["Un tournevis testeur de phase", "Un voltmètre numérique standard", "Un Détecteur de Tension (DDT/VAT) normalisé", "Le dos de la main"], answer: 2, explanation: "Seul un appareil dédié (DDT) est réglementaire. Les tournevis testeurs et les multimètres peuvent induire en erreur ou être mal réglés." },
+        { q: "En basse tension, on considère qu'un environnement est sec et le courant alternatif. À partir de quelle tension y a-t-il un danger mortel absolu pour l'homme (Tension Limite de Sécurité) ?", options: ["12 V", "24 V", "50 V", "230 V"], answer: 2, explanation: "En milieu sec et courant alternatif, la tension limite conventionnelle de sécurité est de 50V (25V sur chantier/milieu mouillé, 12V immergé)." },
+        { q: "Que signifie le sigle 'TBT' en sécurité électrique ?", options: ["Très Basse Tension", "Transformateur Basse Tension", "Tableau Blindé Triphasé", "Tension Brutale Transitoire"], answer: 0, explanation: "La Très Basse Tension (TBT) correspond à des tensions inférieures à 50V AC, utilisées pour des raisons de sécurité stricte (ex: éclairage de piscine)." },
+        { q: "Comment mesure-t-on une résistance avec un Ohmmètre sur un composant intégré à un circuit ?", options: ["En parallèle, circuit sous tension", "En série, circuit sous tension", "Hors tension absolue, en isolant (débranchant) le composant", "Peu importe"], answer: 2, explanation: "Un ohmmètre injecte son propre petit courant. Si le circuit est sous tension, la mesure sera faussée et l'ohmmètre explosera." },
+        { q: "L'électrisation désigne :", options: ["La mort par le courant", "Le passage du courant dans le corps humain sans causer la mort", "Le fait de charger une batterie", "La création d'arcs électriques"], answer: 1, explanation: "L'électrisation est le choc électrique (blessures, brûlures). L'électrocution désigne spécifiquement le cas où l'électrisation entraîne la mort." },
+        { q: "Quelle est la section de fil (en cuivre) minimale standardisée pour un circuit d'éclairage classique ?", options: ["1.5 mm²", "2.5 mm²", "4 mm²", "6 mm²"], answer: 0, explanation: "Le standard est 1.5 mm² pour l'éclairage (disjoncteur 10A/16A) et 2.5 mm² pour les prises de courant (disjoncteur 16A/20A)." },
+        { q: "Dans un tableau électrique de distribution, l'indice 'IP' indique :", options: ["La puissance interne", "Le degré de protection contre la pénétration des corps solides et des liquides", "L'impédance de protection", "L'intensité de crête"], answer: 1, explanation: "L'Indice de Protection (ex: IP65) indique la résistance à la poussière (1er chiffre) et à l'eau (2ème chiffre)." },
+        { q: "Si un câble en cuivre et un câble en aluminium ont le même diamètre et la même longueur, lequel est le meilleur conducteur ?", options: ["L'aluminium", "Le cuivre", "Ils sont identiques", "Cela dépend de la tension"], answer: 1, explanation: "Le cuivre est un bien meilleur conducteur (résistivité plus faible) que l'aluminium. L'aluminium est utilisé sur les lignes HT car il est plus léger et moins cher, au prix d'un diamètre plus gros." }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 3000; 
+    let timerInterval;
+    let selectedOptionIndex = null;
+    let isValidated = false; 
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        shuffleArray(questions);
+        loadQuestion();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                endTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if(timeLeft < 300) { 
+            document.getElementById('timer').style.color = 'var(--wrong-color)';
+        }
+    }
+
+    function loadQuestion() {
+        selectedOptionIndex = null;
+        isValidated = false;
+        document.getElementById('action-btn').disabled = true;
+        document.getElementById('action-btn').innerText = "Valider la réponse technique";
+        document.getElementById('explanation-box').classList.add('hidden'); 
+        
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = ''; 
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, btnElement) {
+        if (isValidated) return; 
+
+        selectedOptionIndex = index;
+        
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        
+        btnElement.classList.add('selected');
+        document.getElementById('action-btn').disabled = false;
+    }
+
+    function handleAction() {
+        if (!isValidated) {
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.answer;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true; 
+                if (index === correctIndex) {
+                    btn.classList.add('correct-ans'); 
+                } else if (index === selectedOptionIndex) {
+                    btn.classList.add('wrong-ans'); 
+                }
+            });
+
+            if (selectedOptionIndex === correctIndex) {
+                score++;
+            }
+
+            const explanationBox = document.getElementById('explanation-box');
+            explanationBox.innerText = `Rappel technique : ${q.explanation}`;
+            explanationBox.classList.remove('hidden');
+
+            document.getElementById('action-btn').innerText = "Question suivante";
+            isValidated = true;
+            
+        } else {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endTest();
+            }
+        }
+    }
+
+    function endTest() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        const percentage = Math.round((score / questions.length) * 100);
+        const scoreCircle = document.getElementById('final-score');
+        scoreCircle.innerText = `${percentage}%`;
+
+        let feedback = "";
+        if (percentage >= 80) {
+            feedback = "Excellent ! Tes fondations en électricité sont ultra-solides. Tu es techniquement prêt pour assumer ce poste et opérer sur les infrastructures de la société.";
+            scoreCircle.style.borderColor = "var(--correct-color)";
+            scoreCircle.style.color = "var(--correct-color)";
+        } else if (percentage >= 50) {
+            feedback = "Niveau correct. Tu as les bases, mais attention aux pièges sur le triphasé et l'appareillage. Relis bien les explications pour sécuriser tes connaissances.";
+            scoreCircle.style.borderColor = "#ff9800";
+            scoreCircle.style.color = "#ff9800";
+        } else {
+            feedback = "C'est l'essence même de ta spécialité. Il est impératif de revoir les formules de base (Ohm, puissance) et les procédures de sécurité avant d'intervenir sur le terrain.";
+            scoreCircle.style.borderColor = "var(--wrong-color)";
+            scoreCircle.style.color = "var(--wrong-color)";
+        }
+
+        document.getElementById('feedback-msg').innerText = `Tu as obtenu ${score} bonnes réponses sur ${questions.length}. ${feedback}`;
+    }
+</script>
+
+</body>
+</html>

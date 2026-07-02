@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Psychologie</title>
+    <style>body{font-family:Segoe UI,Arial,sans-serif;margin:24px;background:#f7fafc;color:#1f2937}</style>
+</head>
+<body>
+    <h1>Test – Psychologie</h1>
+    <p>Contenu du test de psychologie appliquée et évaluations comportementales.</p>
+    <p>
+        <button onclick="goToRandomTest()">Tester un autre test</button>
+        <a href="index.html" style="margin-left:12px">Retour à l'accueil</a>
+    </p>
+
+    <script>
+        const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html", "electrotechnique.html", "entreprise.html", "psychologie.html"];
+        function goToRandomTest(){ window.location.href = tests[Math.floor(Math.random()*tests.length)]; }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur SNEL - Psychologie & Grammaire (Module 7)</title>
+    <style>
+        :root {
+            --primary-color: #008080; /* Bleu Canard / Teal - Réflexion et Calme */
+            --bg-color: #f0f7f7;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --hover-color: #e0f0f0;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --info-bg: #e8f4f8;
+            --info-text: #005555;
+            --info-border: #008080;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 128, 128, 0.15);
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #1a1a1a;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.selected {
+            background-color: #e0f0f0;
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct-ans {
+            background-color: var(--correct-color) !important;
+            color: white !important;
+            border-color: var(--correct-color) !important;
+        }
+
+        .option-btn.wrong-ans {
+            background-color: var(--wrong-color) !important;
+            color: white !important;
+            border-color: var(--wrong-color) !important;
+        }
+
+        .explanation-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--info-border);
+            font-weight: 500;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #006666;
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .result-screen {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 10px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            color: var(--primary-color);
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen">
+        <h1 style="text-align: center; color: var(--primary-color);">Module 7 : Psychologie & Grammaire</h1>
+        <p>Ce module de <strong>50 questions</strong> cible vos compétences comportementales (Savoir-être) et votre maîtrise du français écrit.</p>
+        <p>Il évalue votre <strong>intelligence émotionnelle</strong>, votre gestion des conflits, ainsi que votre capacité à rédiger sans faute, éléments essentiels pour évoluer professionnellement.</p>
+        <p>Temps alloué : <strong>50 minutes</strong>.</p>
+        <button class="btn" onclick="startTest()">Démarrer le test</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="header">
+            <span id="question-counter">Question 1 / 50</span>
+            <span class="timer" id="timer">50:00</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-text" id="question-text">Chargement de la question...</div>
+        
+        <div class="options-grid" id="options-grid"></div>
+
+        <div id="explanation-box" class="explanation-box hidden"></div>
+
+        <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
+    </div>
+
+    <div id="result-screen" class="result-screen hidden">
+        <h2>Bilan du Module</h2>
+        <p>Voici votre score pour cette section Comportement et Langue :</p>
+        <div class="score-circle" id="final-score">0%</div>
+        <p id="feedback-msg"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Refaire le test</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // PARTIE 1 : PSYCHOLOGIE D'ENTREPRISE ET SAVOIR-ÊTRE (25 Questions)
+        { q: "Un collègue s'approprie systématiquement le mérite de votre travail devant le superviseur. Quelle est la meilleure approche ?", options: ["L'insulter devant tout le monde", "Ne rien dire et accumuler de la frustration", "Demander un entretien privé avec lui pour exprimer factuellement votre ressenti", "Saboter son prochain travail"], answer: 2, explanation: "La communication assertive en privé permet de régler le conflit de manière professionnelle sans humilier l'autre publiquement." },
+        { q: "Qu'est-ce que 'l'écoute active' dans une relation professionnelle ?", options: ["Écouter en faisant autre chose", "Écouter attentivement, reformuler et poser des questions pour s'assurer d'avoir bien compris", "Attendre impatiemment son tour de parler", "Faire semblant d'écouter"], answer: 1, explanation: "L'écoute active implique toute votre attention et nécessite de valider la compréhension par la reformulation (ex: 'Si j'ai bien compris, vous souhaitez que...')." },
+        { q: "Lors d'une intervention urgente, votre chef d'équipe panique et vous donne un ordre qui viole les règles de sécurité. Que faites-vous ?", options: ["J'obéis, c'est le chef", "Je refuse fermement en rappelant la consigne de sécurité et je propose une alternative sûre", "Je pars en courant", "Je le fais mais je mets un casque"], answer: 1, explanation: "Le droit de retrait face à un danger de mort et le respect de la sécurité priment toujours sur la hiérarchie. L'assertivité est vitale ici." },
+        { q: "Que signifie faire preuve de 'Résilience' au travail ?", options: ["Être toujours d'accord avec tout le monde", "La capacité à rebondir, à surmonter les échecs et le stress pour continuer à avancer", "Travailler 15 heures par jour", "Ignorer ses émotions"], answer: 1, explanation: "La résilience est une qualité psychologique essentielle pour gérer la pression, apprendre de ses erreurs et ne pas s'effondrer à la première difficulté." },
+        { q: "Un client mécontent vous crie dessus car il n'a plus d'électricité depuis 2 jours. Votre première réaction est de :", options: ["Lui crier dessus également", "Lui dire que ce n'est pas votre faute", "Garder votre calme, faire preuve d'empathie et écouter son problème", "L'ignorer totalement"], answer: 2, explanation: "L'empathie (comprendre la frustration de l'autre) permet de désamorcer l'agressivité. Répondre par l'agressivité ne fait qu'aggraver la situation." },
+        { q: "En psychologie du travail, qu'est-ce que le 'Syndrome de l'imposteur' ?", options: ["Le fait de voler du matériel", "Un doute persistant sur ses propres compétences, en pensant que sa réussite n'est due qu'à la chance", "Se faire passer pour le patron", "Mentir sur son CV"], answer: 1, explanation: "Ce syndrome touche de nombreux professionnels qui craignent constamment d'être démasqués comme incompétents, malgré leurs réussites réelles." },
+        { q: "Pour faire une critique constructive à un collègue, il est recommandé d'utiliser la méthode du 'Sandwich'. Qu'est-ce que c'est ?", options: ["L'inviter à manger", "Commencer par un point positif, donner l'axe d'amélioration, et terminer par un encouragement", "Parler très vite", "Parler de 3 problèmes en même temps"], answer: 1, explanation: "Cette méthode permet de faire passer un message correctif sans braquer l'interlocuteur, en préservant son ego." },
+        { q: "Qu'est-ce que l'Intelligence Émotionnelle (IE) ?", options: ["Avoir un QI supérieur à 130", "Cacher ses émotions au travail", "La capacité à reconnaître, comprendre et maîtriser ses propres émotions et celles des autres", "Être capable de pleurer sur commande"], answer: 2, explanation: "L'IE est aujourd'hui plus recherchée que le QI par les recruteurs, car elle garantit une bonne intégration en équipe et une bonne gestion du stress." },
+        { q: "Vous avez fait une erreur technique grave qui a endommagé un équipement. Que faites-vous ?", options: ["Je cache l'erreur et je pars", "J'accuse un collègue", "Je signale immédiatement l'erreur à mon superviseur en assumant ma responsabilité et je propose une solution", "J'attends qu'on s'en rende compte"], answer: 2, explanation: "L'intégrité et la transparence sont fondamentales. Assumer ses erreurs permet d'intervenir vite pour limiter les dégâts." },
+        { q: "Que signifie être 'Proactif' dans votre travail ?", options: ["Agir après avoir reçu un ordre", "Anticiper les problèmes et prendre des initiatives avant même qu'on vous le demande", "Travailler très lentement", "Se plaindre avant les autres"], answer: 1, explanation: "La proactivité est l'opposé de la réactivité. C'est la capacité à prévoir et à agir par anticipation." },
+        { q: "Dans la gestion du temps, qu'est-ce que la règle de Pareto (loi des 80/20) ?", options: ["Travailler 80h et dormir 20h", "80% des résultats découlent de 20% des actions les plus importantes", "80% des réunions sont inutiles", "80% de pratique, 20% de théorie"], answer: 1, explanation: "Cette règle pousse à identifier et à se concentrer sur les 20% de tâches qui génèrent le plus de valeur, pour optimiser son temps." },
+        { q: "Un collègue vous fait une remarque sexiste ou discriminatoire. Que doit dicter votre comportement ?", options: ["Rire pour ne pas le vexer", "Faire la même chose en retour", "Lui signifier calmement mais fermement que ces propos sont inappropriés au travail", "L'ignorer systématiquement"], answer: 2, explanation: "La tolérance zéro face au harcèlement ou à la discrimination implique de fixer des limites claires et professionnelles dès la première occurrence." },
+        { q: "La 'synergie' au sein d'une équipe technique signifie que :", options: ["Tout le monde fait la même chose", "Le résultat du travail en groupe est supérieur à la simple somme des travaux individuels (1+1=3)", "Le chef fait tout le travail", "L'équipe est fatiguée"], answer: 1, explanation: "La synergie est le bénéfice tiré de la collaboration, où les compétences de chacun se complètent pour créer un résultat exceptionnel." },
+        { q: "Quelle est la différence entre une motivation 'intrinsèque' et 'extrinsèque' ?", options: ["Il n'y a pas de différence", "L'intrinsèque vient de soi (passion, fierté) ; l'extrinsèque vient de l'extérieur (salaire, primes)", "L'intrinsèque est matérielle ; l'extrinsèque est spirituelle", "L'intrinsèque est pour les chefs, l'extrinsèque pour les ouvriers"], answer: 1, explanation: "Un employé motivé intrinsèquement aime son travail pour ce qu'il est. C'est la source de motivation la plus durable." },
+        { q: "Face au changement (ex: nouvelle direction, nouvel outil informatique), quelle est souvent la première réaction psychologique normale d'un groupe ?", options: ["L'enthousiasme total", "Le déni ou la résistance au changement", "La démission collective", "Une augmentation immédiate de la productivité"], answer: 1, explanation: "La courbe du deuil/changement de Kübler-Ross montre que la première phase face à un bouleversement est souvent le choc, le déni ou la résistance." },
+        { q: "Comment définir l'assertivité ?", options: ["La capacité à s'imposer par la force", "L'art de manipuler les autres", "La capacité à exprimer ses idées et défendre ses droits sans agressivité ni soumission", "La capacité à se taire pour éviter les problèmes"], answer: 2, explanation: "Être assertif, c'est se respecter soi-même (ne pas se soumettre) tout en respectant l'autre (ne pas l'agresser)." },
+        { q: "Vous entendez des rumeurs malveillantes sur un manager à la machine à café. Quelle est l'attitude professionnelle ?", options: ["Y participer pour s'intégrer à l'équipe", "Répéter la rumeur au manager concerné", "Ne pas y participer, s'en éloigner ou recentrer la conversation sur le travail", "Enquêter pour savoir si c'est vrai"], answer: 2, explanation: "Les ragots empoisonnent le climat de travail. S'en abstenir est une preuve de maturité professionnelle." },
+        { q: "Dans la communication interpersonnelle, qu'est-ce qui transmet le plus d'informations sur vos véritables émotions ?", options: ["Les mots exacts que vous choisissez (le verbal)", "Votre ton de voix", "Votre langage corporel (posture, regard, gestes - le non-verbal)", "Les emails"], answer: 2, explanation: "Selon la règle des 3V de Mehrabian, le non-verbal représente 55% de l'impact de notre communication émotionnelle." },
+        { q: "Qu'est-ce qu'un biais de confirmation ?", options: ["Un accord signé par le patron", "La tendance à ne chercher et retenir que les informations qui confirment nos croyances préétablies", "Une erreur mathématique", "Le fait de toujours dire 'oui'"], answer: 1, explanation: "En dépannage, c'est un danger grave : être persuadé d'une cause de panne et ignorer les autres symptômes évidents." },
+        { q: "Quelles sont les caractéristiques d'un objectif 'SMART' ?", options: ["Spécial, Magique, Attirant, Rare, Ténu", "Spécifique, Mesurable, Atteignable, Réaliste, Temporellement défini", "Social, Modéré, Amical, Régulier, Tolérant", "Systémique, Majeur, Actif, Rapide, Total"], answer: 1, explanation: "C'est la méthode de base en management pour fixer un objectif clair et évaluable (ex: 'Réduire le temps d'intervention de 10% d'ici 3 mois')." },
+        { q: "Qu'est-ce que la 'Sécurité psychologique' au sein d'une équipe ?", options: ["Le fait d'avoir des caméras de surveillance", "Un environnement où chacun se sent libre de poser des questions ou d'admettre ses erreurs sans peur d'être humilié", "La présence de vigiles", "La garantie de ne jamais être renvoyé"], answer: 1, explanation: "C'est le facteur numéro un des équipes hautement performantes. Sans peur d'être jugé, l'innovation et l'apprentissage explosent." },
+        { q: "Quel est l'un des premiers signes comportementaux d'un pré-burnout (épuisement professionnel) ?", options: ["Le cynisme, l'irritabilité et le détachement vis-à-vis du travail", "Un regain d'énergie exceptionnel", "Le fait de chanter au bureau", "Une mémoire infaillible"], answer: 0, explanation: "Avant l'effondrement physique, le burn-out se manifeste souvent par une baisse d'empathie, du cynisme et une fatigue émotionnelle constante." },
+        { q: "Que signifie 'Déléguer' pour un chef d'équipe ?", options: ["Se débarrasser du travail qu'il n'aime pas", "Confier la réalisation d'une tâche à un collaborateur tout en lui donnant les moyens et l'autonomie pour la réussir", "Faire le travail à la place de l'autre", "Punir un subordonné"], answer: 1, explanation: "La délégation responsabilise et fait grandir l'équipe, tout en permettant au manager de se concentrer sur ses propres missions." },
+        { q: "Lors d'une négociation technique avec un sous-traitant, que cherche l'approche 'Gagnant-Gagnant' (Win-Win) ?", options: ["Détruire l'adversaire", "Trouver un compromis où chaque partie tire un bénéfice mutuel de l'accord", "Céder sur tout pour avoir la paix", "Mentir pour obtenir le meilleur prix"], answer: 1, explanation: "L'approche Win-Win est la seule qui garantisse des relations commerciales et professionnelles pérennes et saines." },
+        { q: "Le 'Micro-management' est considéré comme une mauvaise pratique. De quoi s'agit-il ?", options: ["Gérer une très petite entreprise", "Un manager qui contrôle de manière excessive et étouffante les moindres détails du travail de son équipe", "Faire des réunions de 5 minutes", "Négliger totalement son équipe"], answer: 1, explanation: "Le micro-management détruit la confiance, l'autonomie et la motivation des employés." },
+
+        // PARTIE 2 : GRAMMAIRE ET MAÎTRISE DU FRANÇAIS ÉCRIT (25 Questions)
+        { q: "Accord du participe passé : 'Elles se sont ... au téléphone hier.'", options: ["parlé", "parlés", "parlée", "parlées"], answer: 0, explanation: "Avec les verbes pronominaux, on accorde si le pronom est COD. Ici, elles ont parlé 'À qui ?' -> 'à se' (COI). Il n'y a pas d'accord, on écrit 'parlé'." },
+        { q: "Choisissez la bonne orthographe : 'Je vous serais ... de me répondre rapidement.'", options: ["grès", "gré", "grais", "gret"], answer: 1, explanation: "La formule de politesse correcte est 'savoir gré' (qui signifie être reconnaissant). On écrit 'Je vous saurais gré' (avec le verbe savoir, pas le verbe être)." },
+        { q: "Complétez : 'Les rapports que vous avez ... de rédiger sont prêts.'", options: ["oublié", "oubliés", "oubliée", "oubliées"], answer: 0, explanation: "C'est un participe passé suivi d'un infinitif (de rédiger). L'action de rédiger porte sur les rapports. Le verbe oublier ne s'accorde pas ici (règle complexe du participe suivi d'un infinitif)." },
+        { q: "Complétez : 'Il est ... que nous trouvions une solution.'", options: ["impératif", "impérative", "imperatif", "imperative"], answer: 0, explanation: "L'adjectif s'accorde avec le pronom impersonnel 'Il' (masculin singulier). Donc : impératif." },
+        { q: "Trouvez la phrase correcte :", options: ["Il faut qu'il voye le résultat.", "Il faut qu'il voit le résultat.", "Il faut qu'il voie le résultat.", "Il faut qu'il voiye le résultat."], answer: 2, explanation: "Au subjonctif présent, le verbe voir fait 'que je voie', 'qu'il voie' (avec un 'e' final pour la 3ème personne du singulier)." },
+        { q: "Quelle locution est correcte pour signifier 'à la suite de cela' ?", options: ["Suite à votre demande", "Par suite à votre demande", "À la suite de votre demande", "En suite de votre demande"], answer: 2, explanation: "Bien que 'Suite à' soit toléré dans le langage commercial, l'Académie Française recommande formellement 'À la suite de' dans une rédaction soignée." },
+        { q: "Complétez avec le bon mot : 'Il a commis une ... de langage.'", options: ["infraction", "effraction", "inflexion", "affection"], answer: 0, explanation: "Une infraction est une violation d'une règle (ici, de grammaire). L'effraction, c'est briser une serrure pour cambrioler." },
+        { q: "Complétez la phrase : 'Des matériaux, j'en ai ... beaucoup ce matin.'", options: ["transporté", "transportés", "transportée", "transportées"], answer: 0, explanation: "Le participe passé employé avec l'auxiliaire 'avoir' et précédé du pronom 'en' (qui fait office de COD) reste généralement INVARIABLE." },
+        { q: "Lequel de ces noms est exclusivement féminin ?", options: ["Un/Une acompte", "Un/Une apogée", "Un/Une écritoire", "Un/Une anagramme"], answer: 3, explanation: "On dit UNE anagramme, UN acompte, UN apogée, UNE écritoire. La bonne réponse parmi les choix typiquement trompeurs est anagramme (féminin)." },
+        { q: "Complétez : 'Nous avons attendu une ... heure.'", options: ["demie", "demi", "demi-", "demie-"], answer: 1, explanation: "Devant le nom, 'demi' est relié par un trait d'union et est invariable. On écrit : une demi-heure." },
+        { q: "Quelle est la bonne orthographe ?", options: ["Un palliatif", "Un paliatif", "Un palliatiff", "Un palliattif"], answer: 0, explanation: "Le mot s'écrit avec deux 'l' et un 'f' (Un palliatif = une solution temporaire)." },
+        { q: "Complétez : '... à votre proposition, je la refuse.'", options: ["Quand", "Quant", "Qu'en", "Camp"], answer: 1, explanation: "La locution 'Quant à' (qui signifie 'En ce qui concerne') s'écrit toujours avec un 't'." },
+        { q: "Conjugaison de l'impératif : '... ton matériel avant de partir.'", options: ["Renges", "Range", "Ranges", "Rangé"], answer: 1, explanation: "À l'impératif présent, les verbes du 1er groupe (en -er) ne prennent pas de 's' à la 2ème personne du singulier (Sauf devant 'en' ou 'y', ex: Vas-y)." },
+        { q: "Complétez la locution : '... d'accord sur ce point.'", options: ["Ont est", "On n'est", "On est", "Ont n'est"], answer: 2, explanation: "Il s'agit du pronom indéfini 'On' et du verbe 'être'. (Si la phrase était négative, ce serait 'On n'est pas')." },
+        { q: "Lequel de ces couples de mots sont des paronymes (qui se ressemblent mais ont un sens différent) ?", options: ["Grand / Petit", "Éminemment / Imminemment", "Voiture / Automobile", "Chien / Chat"], answer: 1, explanation: "Éminemment (beaucoup) et Imminemment (très bientôt) se ressemblent fortement à l'oral et à l'écrit, ce sont des paronymes." },
+        { q: "Trouvez la phrase correcte :", options: ["Vous faisez du bon travail.", "Vous disez la vérité.", "Vous dites la vérité.", "Vous contredisez le rapport."], answer: 3, explanation: "Contrairement au verbe 'dire' (Vous dites) et 'faire' (Vous faites), le verbe 'contredire' se conjugue régulièrement : 'Vous contredisez'." },
+        { q: "Accord de l'adjectif verbal : 'Ce sont des journées très ...'", options: ["fatigantes", "fatiguantes", "fatiguant", "fatigante"], answer: 0, explanation: "L'adjectif verbal s'accorde (féminin pluriel) et perd son 'u' par rapport au participe présent : fatigantes." },
+        { q: "Complétez : 'Elles se sont ... compte de l'erreur.'", options: ["rendu", "rendus", "rendue", "rendues"], answer: 0, explanation: "Dans l'expression 'se rendre compte', le mot 'compte' est un COD placé après le verbe. Le participe passé reste invariable : rendu." },
+        { q: "Quelle est la bonne orthographe d'un 'C.V.' développé ?", options: ["Curriculum Vitaé", "Curiculum Vitae", "Curriculum Vitae", "Curriculum Vittae"], answer: 2, explanation: "C'est une expression latine : Curriculum Vitae (avec deux 'r' à Curriculum)." },
+        { q: "Trouvez la formulation la plus professionnelle pour un e-mail :", options: ["Je t'envoie ça fissa.", "Veuillez trouver ci-joint le document demandé.", "Le doc est dans la pièce jointe.", "Regarde l'attachement."], answer: 1, explanation: "L'expression 'Veuillez trouver ci-joint' est la norme formelle de politesse dans la correspondance professionnelle." },
+        { q: "Que signifie la locution latine 'a posteriori' ?", options: ["Avant que l'événement ne se produise", "En se basant sur les faits constatés après l'événement", "À l'extérieur du bâtiment", "En même temps"], answer: 1, explanation: "Faire une analyse 'a posteriori', c'est analyser une situation après coup, une fois les événements déroulés." },
+        { q: "Complétez : 'C'est lui qui ... réparé la ligne.'", options: ["a", "as", "ont", "ai"], answer: 0, explanation: "Le pronom relatif 'qui' prend la personne de son antécédent 'lui' (3ème personne du singulier). Donc : C'est lui qui a." },
+        { q: "Lequel de ces mots est invariable (ne s'accorde jamais en genre et en nombre) ?", options: ["Même", "Quelque", "Tout", "Afin"], answer: 3, explanation: "'Afin' (utilisé dans 'afin de' ou 'afin que') est une conjonction invariable. Les autres mots peuvent varier selon leur fonction dans la phrase." },
+        { q: "Complétez la condition : 'Si l'appareil était branché, la diode ... allumée.'", options: ["sera", "serait", "serai", "soit"], answer: 1, explanation: "Règle du 'Si' : Si + Imparfait (était) -> Proposition principale au Conditionnel Présent (serait)." },
+        { q: "Le 'Jargon' est :", options: ["Un plat cuisiné", "Le vocabulaire spécifique et technique propre à une profession ou un métier", "Un outil de mesure", "Un dialecte régional"], answer: 1, explanation: "Le jargon technique (ex: consigner, VAT, déphasage) permet aux professionnels d'un même domaine de se comprendre rapidement et précisément." }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 3000; 
+    let timerInterval;
+    let selectedOptionIndex = null;
+    let isValidated = false; 
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        shuffleArray(questions);
+        loadQuestion();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                endTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if(timeLeft < 300) { 
+            document.getElementById('timer').style.color = 'var(--wrong-color)';
+        }
+    }
+
+    function loadQuestion() {
+        selectedOptionIndex = null;
+        isValidated = false;
+        document.getElementById('action-btn').disabled = true;
+        document.getElementById('action-btn').innerText = "Valider la réponse";
+        document.getElementById('explanation-box').classList.add('hidden'); 
+        
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = ''; 
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, btnElement) {
+        if (isValidated) return; 
+
+        selectedOptionIndex = index;
+        
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        
+        btnElement.classList.add('selected');
+        document.getElementById('action-btn').disabled = false;
+    }
+
+    function handleAction() {
+        if (!isValidated) {
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.answer;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true; 
+                if (index === correctIndex) {
+                    btn.classList.add('correct-ans'); 
+                } else if (index === selectedOptionIndex) {
+                    btn.classList.add('wrong-ans'); 
+                }
+            });
+
+            if (selectedOptionIndex === correctIndex) {
+                score++;
+            }
+
+            const explanationBox = document.getElementById('explanation-box');
+            explanationBox.innerText = `Analyse de la réponse : ${q.explanation}`;
+            explanationBox.classList.remove('hidden');
+
+            document.getElementById('action-btn').innerText = "Question suivante";
+            isValidated = true;
+            
+        } else {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endTest();
+            }
+        }
+    }
+
+    function endTest() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        const percentage = Math.round((score / questions.length) * 100);
+        const scoreCircle = document.getElementById('final-score');
+        scoreCircle.innerText = `${percentage}%`;
+
+        let feedback = "";
+        if (percentage >= 80) {
+            feedback = "Profil idéal ! Ton intelligence émotionnelle et ta maîtrise de l'écrit prouvent que tu as tout pour évoluer rapidement vers des postes à responsabilités.";
+            scoreCircle.style.borderColor = "var(--correct-color)";
+            scoreCircle.style.color = "var(--correct-color)";
+        } else if (percentage >= 50) {
+            feedback = "Bon niveau. Ton attitude professionnelle est solide, mais relis bien les règles complexes des participes passés pour que tes futurs rapports soient impeccables.";
+            scoreCircle.style.borderColor = "#ff9800";
+            scoreCircle.style.color = "#ff9800";
+        } else {
+            feedback = "La technique est importante, mais le savoir-être et la rédaction le sont tout autant ! Prends le temps de lire toutes les explications fournies pour t'améliorer.";
+            scoreCircle.style.borderColor = "var(--wrong-color)";
+            scoreCircle.style.color = "var(--wrong-color)";
+        }
+
+        document.getElementById('feedback-msg').innerText = `Tu as validé ${score} réponses sur ${questions.length}. ${feedback}`;
+    }
+</script>
+
+</body>
+</html>

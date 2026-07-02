@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Entreprise</title>
+    <style>body{font-family:Segoe UI,Arial,sans-serif;margin:24px;background:#f7fafc;color:#1f2937}</style>
+</head>
+<body>
+    <h1>Test – Entreprise</h1>
+    <p>Contenu du test sur l'entreprise, management et procédures.</p>
+    <p>
+        <button onclick="goToRandomTest()">Tester un autre test</button>
+        <a href="index.html" style="margin-left:12px">Retour à l'accueil</a>
+    </p>
+
+    <script>
+        const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html", "electrotechnique.html", "entreprise.html", "psychologie.html"];
+        function goToRandomTest(){ window.location.href = tests[Math.floor(Math.random()*tests.length)]; }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur SNEL & Kadea - Culture d'Entreprise (Niveau 6)</title>
+    <style>
+        :root {
+            --primary-color: #004d99; /* Bleu institutionnel */
+            --secondary-color: #ffd700; /* Or/Jaune électrique */
+            --bg-color: #f0f4f8;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --hover-color: #e6f0fa;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --info-bg: #fff9e6;
+            --info-text: #856404;
+            --info-border: #ffeeba;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 77, 153, 0.15);
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #1a1a1a;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.selected {
+            background-color: #e6f0fa;
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct-ans {
+            background-color: var(--correct-color) !important;
+            color: white !important;
+            border-color: var(--correct-color) !important;
+        }
+
+        .option-btn.wrong-ans {
+            background-color: var(--wrong-color) !important;
+            color: white !important;
+            border-color: var(--wrong-color) !important;
+        }
+
+        .explanation-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--secondary-color);
+            font-weight: 500;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #003366;
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .result-screen {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 10px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            color: var(--primary-color);
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen">
+        <h1 style="text-align: center; color: var(--primary-color);">Module 6 : SNEL & Culture d'Entreprise</h1>
+        <p>Ce dernier module évalue votre connaissance de la <strong>Société Nationale d'Électricité</strong>, de ses infrastructures en RDC, ainsi que les codes de conduite, d'éthique et de gestion en entreprise.</p>
+        <p>Ces questions servent à identifier les candidats qui comprennent l'environnement dans lequel ils vont évoluer.</p>
+        <p>Temps alloué : <strong>50 minutes</strong>.</p>
+        <button class="btn" onclick="startTest()">Démarrer le questionnaire</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="header">
+            <span id="question-counter">Question 1 / 50</span>
+            <span class="timer" id="timer">50:00</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-text" id="question-text">Chargement de la question...</div>
+        
+        <div class="options-grid" id="options-grid"></div>
+
+        <div id="explanation-box" class="explanation-box hidden"></div>
+
+        <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
+    </div>
+
+    <div id="result-screen" class="result-screen hidden">
+        <h2>Bilan du Test Entreprise</h2>
+        <p>Voici votre score pour cette section institutionnelle :</p>
+        <div class="score-circle" id="final-score">0%</div>
+        <p id="feedback-msg"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Refaire le test</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // CONNAISSANCES SNEL ET INFRASTRUCTURES
+        { q: "En quelle année la Société Nationale d'Électricité (SNEL) a-t-elle été créée ?", options: ["1960", "1970", "1985", "2000"], answer: 1, explanation: "La SNEL a été créée par l'ordonnance-loi n° 70/033 du 16 mai 1970." },
+        { q: "Quel est le statut juridique actuel de la SNEL ?", options: ["Société à Responsabilité Limitée (SARL)", "Établissement public à caractère administratif", "Société Anonyme (SA) avec Conseil d'Administration", "Organisation Non Gouvernementale"], answer: 2, explanation: "Dans le cadre de la réforme des entreprises publiques, la SNEL a été transformée en Société Anonyme (SNEL SA)." },
+        { q: "Quelles sont les trois missions principales et historiques de la SNEL SA ?", options: ["Régulation, Taxation, Sanction", "Production, Transport, Distribution d'énergie électrique", "Importation, Stockage, Vente de pétrole", "Construction, BTP, Urbanisme"], answer: 1, explanation: "Le cœur de métier de la SNEL est de produire l'électricité, de la transporter via ses réseaux HT, et de la distribuer aux consommateurs finaux." },
+        { q: "Quel est le plus grand complexe hydroélectrique de la RDC, exploité par la SNEL ?", options: ["Le barrage de Zongo", "Le barrage de Ruzizi", "Le site d'Inga", "Le barrage de Mwadingusha"], answer: 2, explanation: "Le site d'Inga (Inga I et Inga II) sur le fleuve Congo, dans la province du Kongo Central, est le plus grand complexe du pays." },
+        { q: "Dans le jargon de la SNEL à Kinshasa, que signifie l'acronyme DKS ?", options: ["Direction de Kinshasa Sud", "Direction de la Distribution de Kinshasa", "Département Kilométrique Standard", "Division des Kiosques de Sécurité"], answer: 1, explanation: "La DKS (Direction de la Distribution de Kinshasa) est l'entité chargée de gérer le réseau basse et moyenne tension pour la capitale." },
+        { q: "La SNEL exploite une ligne THT (Très Haute Tension) célèbre qui relie Inga au Katanga. Quelle est sa particularité ?", options: ["Elle est souterraine", "Elle transporte du Courant Continu (Ligne Inga-Kolwezi)", "Elle est en cuivre massif", "Elle fonctionne au solaire"], answer: 1, explanation: "La ligne Inga-Kolwezi est l'une des plus longues lignes à Courant Continu Haute Tension (CCHT / HVDC) au monde, permettant de limiter les pertes sur cette très longue distance." },
+        { q: "Où se situe le siège social de la Direction Générale de la SNEL SA ?", options: ["Lubumbashi", "Matadi", "Kinshasa (Commune de la Gombe)", "Boma"], answer: 2, explanation: "Le siège social administratif et la Direction Générale se trouvent à Kinshasa, dans la commune de la Gombe." },
+        { q: "Quel ministère assure la tutelle technique de la SNEL SA ?", options: ["Le Ministère de l'Économie", "Le Ministère des Finances", "Le Ministère des Ressources Hydrauliques et Électricité", "Le Ministère des Transports"], answer: 2, explanation: "La tutelle technique du secteur de l'énergie est assurée par le Ministère des Ressources Hydrauliques et Électricité." },
+        { q: "Comment s'appelle l'action de couper volontairement le courant sur une partie du réseau pour éviter un effondrement total lorsque la demande dépasse la production ?", options: ["Le court-circuit", "Le délestage", "L'amortissement", "La consigne"], answer: 1, explanation: "Le délestage est une manœuvre d'exploitation qui consiste à priver temporairement d'électricité certains clients pour maintenir l'équilibre du réseau." },
+        { q: "Quel nom donne-t-on couramment aux compteurs à prépaiement déployés par la SNEL pour moderniser la facturation ?", options: ["Les compteurs Cash Power", "Les compteurs Linky", "Les compteurs analogiques", "Les compteurs horaires"], answer: 0, explanation: "En RDC, le système de compteurs à prépaiement (où l'on achète des unités d'énergie à l'avance) est communément appelé Cash Power." },
+        { q: "Le barrage hydroélectrique de Zongo I et Zongo II se trouve sur quelle rivière ?", options: ["Le fleuve Congo", "La rivière Inkisi", "La rivière Lufira", "La rivière Kasaï"], answer: 1, explanation: "Les barrages de Zongo sont érigés sur la rivière Inkisi, dans le Kongo Central." },
+        { q: "Que signifie un 'raccordement frauduleux' pour la SNEL ?", options: ["Un branchement fait par un agent agréé", "Un branchement direct au réseau sans compteur ou sans contrat, constituant un vol d'énergie", "L'utilisation d'une multiprise", "Un contrat commercial spécial"], answer: 1, explanation: "Les raccordements frauduleux sont des actes de vol d'électricité, causant d'énormes pertes financières à la société et surchargeant les cabines." },
+        { q: "La SNEL détient-elle encore le monopole absolu et légal sur l'électricité en RDC ?", options: ["Oui, c'est interdit aux autres", "Non, le secteur de l'électricité a été libéralisé par la loi de 2014", "Oui, sauf pour le solaire", "Oui, mais uniquement à Kinshasa"], answer: 1, explanation: "La loi de 2014 a libéralisé le secteur de l'électricité en RDC, permettant théoriquement à des opérateurs privés de produire et distribuer du courant." },
+        { q: "L'unité de facturation de l'énergie électrique au client par la SNEL est le :", options: ["Kilowatt (kW)", "Volt (V)", "Kilowatt-heure (kWh)", "Joule (J)"], answer: 2, explanation: "La SNEL facture l'énergie consommée dans le temps, exprimée en Kilowatt-heure (kWh)." },
+        { q: "Qu'est-ce qu'une 'cabine de décharge' ou 'cabine de distribution' dans le jargon SNEL ?", options: ["Le bureau des paiements", "Un poste transformateur MT/BT qui abaisse la tension pour la distribuer au quartier", "Un entrepôt de matériel", "Le centre de formation"], answer: 1, explanation: "La cabine de distribution abrite le transformateur qui convertit la moyenne tension (MT) en basse tension (BT - 230/400V) utilisable par les ménages." },
+
+        // CULTURE D'ENTREPRISE ET GESTION
+        { q: "Que représente un organigramme dans une entreprise ?", options: ["Le plan du réseau électrique", "La représentation graphique de la hiérarchie et de l'organisation des services", "Le tableau des horaires des agents", "Le bilan financier"], answer: 1, explanation: "L'organigramme schématise les liens hiérarchiques et fonctionnels entre les différents départements et postes d'une entreprise." },
+        { q: "Si vous constatez un danger grave et imminent sur le réseau, à qui devez-vous le signaler en priorité selon la voie hiérarchique ?", options: ["Au Directeur Général (DG)", "Au Ministre", "À votre superviseur direct ou chef d'équipe", "À la presse"], answer: 2, explanation: "Le respect de la voie hiérarchique impose de remonter l'information à son supérieur hiérarchique direct." },
+        { q: "Qu'est-ce qu'un conflit d'intérêts dans le cadre professionnel ?", options: ["Une dispute avec un collègue", "Une situation où les intérêts personnels d'un agent peuvent influencer son jugement professionnel au détriment de l'entreprise", "Une grève syndicale", "Un désaccord technique"], answer: 1, explanation: "Le conflit d'intérêts survient par exemple si un agent SNEL favorise une entreprise lui appartenant pour l'obtention d'un marché public." },
+        { q: "Quel est le rôle principal d'un Syndicat en entreprise ?", options: ["Licencier les employés", "Défendre les droits et intérêts professionnels des travailleurs", "Gérer la comptabilité", "Fixer le prix de l'électricité"], answer: 1, explanation: "Le syndicat est une organisation de travailleurs qui vise à défendre leurs droits, améliorer leurs conditions de travail et négocier avec la direction." },
+        { q: "Que signifie le sigle B2B (Business to Business) ?", options: ["Des relations commerciales d'entreprise à entreprise", "La vente directe aux particuliers", "Un type de câble", "Une norme de sécurité"], answer: 0, explanation: "B2B désigne les activités commerciales entre deux entreprises (ex: la SNEL qui vend du courant à une société minière). Par opposition au B2C (vers les particuliers)." },
+        { q: "Qu'est-ce qu'un 'Compte-rendu' de réunion ?", options: ["Une facture détaillée", "Un document écrit résumant les échanges, les décisions prises et les actions à mener", "Une lettre de licenciement", "Un rapport financier"], answer: 1, explanation: "Le compte-rendu garde une trace officielle de ce qui s'est dit et décidé lors d'une réunion professionnelle." },
+        { q: "Que signifie le secret professionnel ou la confidentialité pour un agent ?", options: ["Ne jamais parler à ses collègues", "Cacher ses outils", "L'interdiction de divulguer des informations sensibles de l'entreprise à des personnes non autorisées", "Travailler seul dans le noir"], answer: 2, explanation: "Le devoir de réserve et de confidentialité empêche un agent de révéler des plans, des données clients ou des stratégies à l'extérieur." },
+        { q: "Face à une tentative de corruption par un client pour obtenir un branchement illégal, quelle est l'attitude professionnelle exigée ?", options: ["Accepter discrètement", "Négocier le prix", "Refuser fermement et signaler l'incident à sa hiérarchie", "Le faire gratuitement"], answer: 2, explanation: "L'éthique et le code de conduite exigent la tolérance zéro face à la corruption et le signalement de l'acte." },
+        { q: "Qu'est-ce qu'un KPI (Indicateur Clé de Performance) ?", options: ["Une pièce de moteur", "Une mesure chiffrée permettant d'évaluer l'efficacité d'une action ou d'un service (ex: temps moyen de réparation)", "Un syndicat", "Une taxe"], answer: 1, explanation: "Les KPIs (Key Performance Indicators) sont des statistiques utilisées par les managers pour piloter l'entreprise." },
+        { q: "Quelle est l'utilité d'une 'Procédure Standard d'Opération' (SOP) ?", options: ["Punir les agents", "Standardiser une tâche pour garantir qu'elle soit faite de la même manière, de façon sûre et efficace par tout le monde", "Faire joli dans un bureau", "Augmenter le salaire"], answer: 1, explanation: "Les SOP (ou modes opératoires) garantissent la qualité et la sécurité en imposant une méthode de travail unifiée." },
+        { q: "Qu'est-ce qu'un Audit en entreprise ?", options: ["Une fête annuelle", "Une vérification indépendante (financière ou technique) pour s'assurer du respect des normes et de la bonne gestion", "Une grève", "Un modèle de véhicule"], answer: 1, explanation: "Un audit est une expertise qui évalue la conformité des processus de l'entreprise par rapport à un référentiel." },
+        { q: "En entreprise, que signifie l'acronyme RH ?", options: ["Ressources Hydrologiques", "Ressources Humaines", "Réseau Haute-tension", "Rendement Horaire"], answer: 1, explanation: "Le département des Ressources Humaines (RH) gère le recrutement, la paie, la formation et les carrières des employés." },
+        { q: "Qu'est-ce que le 'Chiffre d'affaires' d'une entreprise ?", options: ["L'argent qui reste après avoir payé toutes les charges (Bénéfice)", "Le total des ventes de biens et de services facturées sur une période", "Les dettes de l'entreprise", "Le nombre d'employés"], answer: 1, explanation: "Le chiffre d'affaires (CA) est la somme totale des ventes, sans déduire les dépenses. S'il reste de l'argent après les dépenses, c'est le bénéfice." },
+        { q: "Que signifie le concept de RSE (Responsabilité Sociétale des Entreprises) ?", options: ["Payer ses impôts en retard", "L'intégration volontaire par l'entreprise de préoccupations sociales et environnementales dans ses activités", "Faire travailler des enfants", "Ignorer les plaintes"], answer: 1, explanation: "La RSE montre qu'une entreprise (comme la SNEL) se soucie de son impact sur la société, l'écologie et les communautés locales." },
+        { q: "Si la SNEL lance un 'Marché Public', cela signifie qu'elle :", options: ["Ouvre un supermarché", "Achete des biens ou des travaux via une procédure d'appel d'offres transparente encadrée par la loi", "Vend du courant au marché", "Donne du matériel gratuit"], answer: 1, explanation: "En tant que structure étatique, la SNEL doit passer par des marchés publics (appels d'offres) pour acheter du matériel lourd afin de garantir la transparence." },
+
+        // MISES EN SITUATION ET LOGIQUE PROFESSIONNELLE
+        { q: "Un client en colère vous insulte pendant que vous dépannez une cabine. Quelle est la meilleure réaction professionnelle ?", options: ["Répondre par des insultes", "Arrêter de travailler et partir", "Rester calme, courtois, sécuriser la zone et ne pas répondre aux provocations", "Appeler la police immédiatement"], answer: 2, explanation: "Un agent d'une entreprise publique représente l'institution. Il doit faire preuve de sang-froid, désamorcer le conflit et prioriser la sécurité technique." },
+        { q: "Il y a une panne majeure. L'Hôpital Général (qui a des patients sous assistance respiratoire) et un quartier résidentiel huppé sont coupés. Qui rétablir en priorité absolue ?", options: ["Le quartier huppé", "L'Hôpital Général", "Le premier qui a appelé", "On tire à pile ou face"], answer: 1, explanation: "Dans le service public de l'électricité, les infrastructures vitales (hôpitaux, régies d'eau, armée) sont toujours la priorité absolue de rétablissement (clients prioritaires)." },
+        { q: "Un collègue s'électrise devant vous. Lequel de ces gestes devez-vous faire EN PREMIER ?", options: ["Le toucher pour le tirer en arrière", "Lui jeter de l'eau", "Couper l'alimentation (disjoncteur/sectionneur) ou l'écarter avec un objet isolant sec", "Appeler une ambulance"], answer: 2, explanation: "Le premier geste de secourisme électrique (P.A.S : Protéger) est de supprimer le danger en coupant le courant pour ne pas être électrisé soi-même." },
+        { q: "Vous remarquez une anomalie mineure mais dangereuse à long terme sur un disjoncteur THT lors d'une inspection de routine. Que faites-vous ?", options: ["Je le répare tout de suite sans rien dire", "Je le note dans le cahier de rapport et je fais remonter l'information à mon chef", "J'attends que ça casse", "Je mets du scotch"], answer: 1, explanation: "La traçabilité et le respect de la hiérarchie sont cruciaux. Il faut documenter l'anomalie pour planifier une intervention sécurisée (maintenance préventive)." },
+        { q: "Que signifie travailler 'en équipe' pour un technicien d'intervention ?", options: ["Faire le travail des autres", "Chacun fait ce qu'il veut", "Communiquer, coordonner ses actions et veiller mutuellement à la sécurité des collègues", "Critiquer les autres en permanence"], answer: 2, explanation: "Le travail d'équipe implique la coordination et le respect mutuel, particulièrement vital pour la sécurité lors de consignations croisées." },
+        { q: "Vous avez 3 tâches à faire : A (urgente et importante), B (urgente mais peu importante), C (importante mais pas urgente). Par quoi commencez-vous ?", options: ["Tâche A", "Tâche B", "Tâche C", "Je prends une pause"], answer: 0, explanation: "Selon la matrice d'Eisenhower, il faut toujours traiter immédiatement ce qui est à la fois urgent et important (Tâche A)." },
+        { q: "Qu'est-ce qu'un 'plan de continuité d'activité' (PCA) dans une entreprise énergétique ?", options: ["Un plan d'urbanisme", "Un ensemble de procédures pour maintenir l'alimentation électrique essentielle en cas de crise majeure (catastrophe, grève)", "Un plan de retraite", "Une promotion de ventes"], answer: 1, explanation: "Le PCA garantit que l'entreprise peut continuer à fonctionner et fournir son service minimum en cas de sinistre grave." },
+        { q: "En entreprise, qu'est-ce que le 'Brainstorming' (Remue-méninges) ?", options: ["Une migraine", "Une technique de réunion où l'on produit un maximum d'idées en groupe pour résoudre un problème", "Un lavage de cerveau", "Une punition"], answer: 1, explanation: "C'est un outil de créativité et de résolution de problèmes en équipe, très utilisé pour améliorer les processus." },
+        { q: "Un équipement acheté par la SNEL perd de sa valeur comptable chaque année en raison de son usure. Comment appelle-t-on ce concept financier ?", options: ["L'inflation", "L'amortissement", "Le dividende", "Le bénéfice"], answer: 1, explanation: "L'amortissement est la constatation comptable de la perte de valeur d'un investissement (matériel, véhicule) au fil du temps." },
+        { q: "Si la SNEL est une SA, qui prend les grandes décisions stratégiques (budget, investissements lourds) ?", options: ["Les techniciens", "Le syndicat", "Le Conseil d'Administration", "Les clients"], answer: 2, explanation: "Dans une Société Anonyme, c'est le Conseil d'Administration, représentant les actionnaires (ici l'État congolais), qui valide la stratégie globale." },
+        
+        // LOGIQUE RAPIDE APPLIQUÉE
+        { q: "Si 2 agents relèvent 20 compteurs en 1 heure, combien de temps faudra-t-il à 1 agent pour relever 40 compteurs ?", options: ["1 heure", "2 heures", "3 heures", "4 heures"], answer: 3, explanation: "1 agent relève 10 compteurs en 1 heure. Pour en relever 40, il lui faudra 4 fois plus de temps, soit 4 heures." },
+        { q: "Un rouleau contient 100m de câble. Lors d'une intervention, on coupe un premier morceau de 15m, puis un second représentant la moitié de ce qu'il reste. Combien de mètres reste-t-il dans le rouleau final ?", options: ["35m", "42.5m", "45m", "50m"], answer: 1, explanation: "100m - 15m = 85m restants. La moitié de 85m est 42,5m. Il reste donc 42,5m." },
+        { q: "Trouvez l'intrus parmi ces moyens de communication formels en entreprise :", options: ["La note de service", "Le mémorandum", "Le rapport technique", "Le message WhatsApp à un collègue"], answer: 3, explanation: "WhatsApp est informel. Les notes, mémos et rapports sont des canaux de communication officiels, traçables et engageant l'entreprise." },
+        { q: "Un chef d'équipe dit : 'Tous les câbles sous-marins sont blindés'. Le câble X n'est pas blindé. Que déduisez-vous ?", options: ["Le câble X est un câble sous-marin", "Le câble X n'est pas un câble sous-marin", "Le câble X est en panne", "Rien"], answer: 1, explanation: "Déduction logique : si la condition pour être sous-marin est d'être blindé, l'absence de blindage prouve que ce n'est pas un câble sous-marin." },
+        { q: "Quelles sont les couleurs réglementaires des panneaux de sécurité en entreprise ?", options: ["Rouge=Interdiction, Bleu=Obligation, Jaune=Avertissement, Vert=Sauvetage/Secours", "Rouge=Avertissement, Bleu=Interdiction", "Vert=Danger, Jaune=Obligation", "Toutes les couleurs veulent dire la même chose"], answer: 0, explanation: "C'est la norme universelle de signalisation de sécurité sur les lieux de travail (norme ISO 7010)." },
+        { q: "Si la lettre A=1, B=2, C=3... Quelle est la valeur du mot 'SNEL' ?", options: ["40", "50", "49", "51"], answer: 2, explanation: "S=19, N=14, E=5, L=12. 19 + 14 + 5 + 12 = 50." },
+        { q: "Vous avez 3 interventions : Remplacement fusible (15 min), Tirage câble (1h30), Rapport (30 min). Combien de temps total faut-il ?", options: ["1h45", "2h00", "2h15", "2h30"], answer: 2, explanation: "15m + 30m = 45m. 1h30 + 45m = 2h15." },
+        { q: "Complétez l'analogie : 'Dépense' est à 'Coût' ce que 'Recette' est à :", options: ["Perte", "Gain / Chiffre d'affaires", "Dette", "Facture"], answer: 1, explanation: "Les dépenses représentent l'argent qui sort (les coûts). Les recettes représentent l'argent qui rentre (les gains ou le CA)." },
+        { q: "Si le DG d'une entreprise prend une décision 'Unilatérale', cela signifie qu'il l'a prise :", options: ["Après avoir consulté tout le monde", "Seul, de son propre côté, sans l'accord de la partie adverse", "En accord avec le syndicat", "Par accident"], answer: 1, explanation: "Une décision unilatérale est prise par une seule partie, sans négociation." },
+        { q: "Un agent arrive à 07h45 et part à 16h00 avec 45 minutes de pause repas. Combien d'heures a-t-il travaillé ?", options: ["7h30", "8h00", "8h15", "7h45"], answer: 0, explanation: "De 07h45 à 16h00 = 8h15 de présence. 8h15 moins 45 minutes de pause = 7h30 de travail effectif." }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 3000; 
+    let timerInterval;
+    let selectedOptionIndex = null;
+    let isValidated = false; 
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        shuffleArray(questions);
+        loadQuestion();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                endTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if(timeLeft < 300) { 
+            document.getElementById('timer').style.color = 'var(--wrong-color)';
+        }
+    }
+
+    function loadQuestion() {
+        selectedOptionIndex = null;
+        isValidated = false;
+        document.getElementById('action-btn').disabled = true;
+        document.getElementById('action-btn').innerText = "Valider la réponse";
+        document.getElementById('explanation-box').classList.add('hidden'); 
+        
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = ''; 
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, btnElement) {
+        if (isValidated) return; 
+
+        selectedOptionIndex = index;
+        
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        
+        btnElement.classList.add('selected');
+        document.getElementById('action-btn').disabled = false;
+    }
+
+    function handleAction() {
+        if (!isValidated) {
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.answer;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true; 
+                if (index === correctIndex) {
+                    btn.classList.add('correct-ans'); 
+                } else if (index === selectedOptionIndex) {
+                    btn.classList.add('wrong-ans'); 
+                }
+            });
+
+            if (selectedOptionIndex === correctIndex) {
+                score++;
+            }
+
+            const explanationBox = document.getElementById('explanation-box');
+            explanationBox.innerText = `Le saviez-vous ? ${q.explanation}`;
+            explanationBox.classList.remove('hidden');
+
+            document.getElementById('action-btn').innerText = "Question suivante";
+            isValidated = true;
+            
+        } else {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endTest();
+            }
+        }
+    }
+
+    function endTest() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        const percentage = Math.round((score / questions.length) * 100);
+        const scoreCircle = document.getElementById('final-score');
+        scoreCircle.innerText = `${percentage}%`;
+
+        let feedback = "";
+        if (percentage >= 80) {
+            feedback = "Félicitations ! Tu connais l'entreprise et ses codes sur le bout des doigts. C'est exactement le profil d'agent que recherchent les recruteurs.";
+            scoreCircle.style.borderColor = "var(--correct-color)";
+            scoreCircle.style.color = "var(--correct-color)";
+        } else if (percentage >= 50) {
+            feedback = "Très bon travail. Relis bien les questions concernant les comportements éthiques et la sécurité, c'est très important pour l'image de la société.";
+            scoreCircle.style.borderColor = "#ff9800";
+            scoreCircle.style.color = "#ff9800";
+        } else {
+            feedback = "Il y a quelques lacunes sur la culture d'entreprise. Prends bien le temps de mémoriser les informations clés sur les barrages et l'organisation hiérarchique !";
+            scoreCircle.style.borderColor = "var(--wrong-color)";
+            scoreCircle.style.color = "var(--wrong-color)";
+        }
+
+        document.getElementById('feedback-msg').innerText = `Tu as obtenu ${score} bonnes réponses sur ${questions.length}. ${feedback}`;
+    }
+</script>
+
+</body>
+</html>
