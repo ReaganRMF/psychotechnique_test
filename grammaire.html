@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur SNEL - 100% Grammaire (Module 9)</title>
+    <style>
+        :root {
+            --primary-color: #800020; /* Bordeaux - Rigueur académique */
+            --bg-color: #fcf4f5;
+            --text-color: #2c2c2c;
+            --card-bg: #ffffff;
+            --hover-color: #f5e6e8;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --info-bg: #fdf5f6;
+            --info-text: #660019;
+            --info-border: #800020;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(128, 0, 32, 0.15);
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #1a1a1a;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.selected {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct-ans {
+            background-color: var(--correct-color) !important;
+            color: white !important;
+            border-color: var(--correct-color) !important;
+        }
+
+        .option-btn.wrong-ans {
+            background-color: var(--wrong-color) !important;
+            color: white !important;
+            border-color: var(--wrong-color) !important;
+        }
+
+        .explanation-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--info-border);
+            font-weight: 500;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #4d0013;
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .result-screen {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 10px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            color: var(--primary-color);
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen">
+        <h1 style="text-align: center; color: var(--primary-color);">Module 9 : 100% Grammaire</h1>
+        <p>Ce module est l'épreuve ultime pour tester ta maîtrise de la langue française. <strong>50 questions</strong> sans aucun calcul, purement axées sur les pièges orthographiques et syntaxiques.</p>
+        <p>Temps alloué : <strong>50 minutes</strong>.</p>
+        <button class="btn" onclick="startTest()">Démarrer l'épreuve de grammaire</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="header">
+            <span id="question-counter">Question 1 / 50</span>
+            <span class="timer" id="timer">50:00</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-text" id="question-text">Chargement de la question...</div>
+        
+        <div class="options-grid" id="options-grid"></div>
+
+        <div id="explanation-box" class="explanation-box hidden"></div>
+
+        <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
+    </div>
+
+    <div id="result-screen" class="result-screen hidden">
+        <h2>Bilan Grammatical</h2>
+        <p>Voici ton score pour cette session linguistique :</p>
+        <div class="score-circle" id="final-score">0%</div>
+        <p id="feedback-msg"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Recommencer</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Complétez : 'Les rapports que les techniciens ont ... sont sur le bureau.'", options: ["écrit", "écrits", "écrite", "écrites"], answer: 1, explanation: "Le COD 'que' (qui remplace 'les rapports', masculin pluriel) est placé avant le verbe. Le participe passé s'accorde donc : écrits." },
+        { q: "Complétez : 'Ils se sont ... la main pour conclure l'accord.'", options: ["serré", "serrés", "serrée", "serrées"], answer: 0, explanation: "Ils ont serré quoi ? 'la main' (COD placé APRÈS le verbe pronominal). Le participe passé reste invariable." },
+        { q: "Complétez : 'Elle s'est ... qu'elle avait oublié son multimètre.'", options: ["rendu compte", "rendue compte", "rendu comptes", "rendues comptes"], answer: 0, explanation: "Dans la locution 'se rendre compte', 'compte' est le COD placé après le verbe. L'accord ne se fait jamais : elle s'est rendu compte." },
+        { q: "Trouvez la phrase correcte :", options: ["Des chemises bleues foncées.", "Des chemises bleus foncés.", "Des chemises bleu foncé.", "Des chemises bleue foncé."], answer: 2, explanation: "Les adjectifs de couleur composés (bleu foncé, vert pomme) sont TOUJOURS invariables." },
+        { q: "Complétez : 'Ce sont des outils ... il se sert tous les jours.'", options: ["dont", "que", "qui", "auxquels"], answer: 0, explanation: "Le verbe 'se servir' se construit avec 'de' (se servir de qqch). Le pronom relatif qui remplace 'de + nom' est 'dont'." },
+        { q: "Complétez : 'Veuillez me tenir informé ... pannes éventuelles.'", options: ["des", "de les", "du", "aux"], answer: 0, explanation: "On dit 'informé de'. Au pluriel, 'de + les' se contracte obligatoirement en 'des'." },
+        { q: "Choisissez la bonne orthographe :", options: ["Un cauchemard", "Un cochemard", "Un cauchemar", "Un cochemar"], answer: 2, explanation: "Le mot 'cauchemar' ne prend jamais de 'd' à la fin." },
+        { q: "Trouvez la bonne conjugaison : 'Il faut que nous ... ce travail avant midi.'", options: ["finissons", "finissions", "finiront", "finirons"], answer: 1, explanation: "La locution 'il faut que' exige le subjonctif. À la 1ère personne du pluriel, c'est 'que nous finissions'." },
+        { q: "Complétez : '... 'il fasse, il reste le meilleur.'", options: ["Quoi", "Quoiqu'", "Quoique", "Quoi qu'"], answer: 3, explanation: "Lorsqu'on peut remplacer par 'Quelle que soit la chose que', on écrit en deux mots : 'Quoi qu''." },
+        { q: "Lequel de ces mots s'écrit toujours avec un 's' à la fin au singulier ?", options: ["Puit", "Puits", "Puitte", "Pui"], answer: 1, explanation: "Le mot 'puits' prend toujours un 's', même au singulier." },
+        { q: "Complétez : 'Les ... sont restés ouverts toute la nuit.'", options: ["portail", "portails", "portaux", "portales"], answer: 1, explanation: "Les mots terminés en '-ail' prennent un 's' au pluriel (un portail, des portails), sauf quelques exceptions (travail/travaux, corail/coraux, etc.)." },
+        { q: "Complétez : 'Ils se sont ... des insultes.'", options: ["lancé", "lancés", "lancée", "lancées"], answer: 0, explanation: "Ils ont lancé quoi ? 'des insultes' (COD placé après le verbe). Invariable." },
+        { q: "Trouvez l'intrus (la mauvaise orthographe) :", options: ["Des choux", "Des bijoux", "Des cloux", "Des genoux"], answer: 2, explanation: "La règle dit que les mots en -ou prennent un 's' (des clous), sauf 7 exceptions qui prennent un 'x' (bijoux, cailloux, choux, genoux, hiboux, joujoux, poux)." },
+        { q: "Complétez : 'Je ne crois pas qu'il ... venir.'", options: ["puisse", "peut", "pourra", "pourrait"], answer: 0, explanation: "Le verbe 'croire' à la forme négative ('ne crois pas que') entraîne le subjonctif : 'qu'il puisse'." },
+        { q: "Complétez : 'C'est à cette heure-là ... la panne a commencé.'", options: ["où", "que", "dont", "laquelle"], answer: 1, explanation: "Après le présentatif 'c'est... que', il ne faut pas utiliser 'où' même pour le temps. 'C'est à cette heure-là que...'." },
+        { q: "Choisissez la bonne forme : 'J'ai ... de matériel que toi.'", options: ["moins", "moin", "moind", "moinss"], answer: 0, explanation: "L'adverbe de quantité s'écrit toujours 'moins' avec un 's'." },
+        { q: "Complétez : '...-tu me passer la clé de 12 ?'", options: ["Peux", "Peut", "Peut-être", "Peus"], answer: 0, explanation: "À la deuxième personne du singulier de l'indicatif, le verbe pouvoir s'écrit 'Tu peux'." },
+        { q: "Trouvez la phrase correcte :", options: ["J'ai pallier au problème.", "J'ai pallié au problème.", "J'ai pallié le problème.", "J'ai pallier le problème."], answer: 2, explanation: "Le verbe 'pallier' est transitif direct (il n'est pas suivi de la préposition 'à'). On dit 'pallier le problème'." },
+        { q: "Comment écrit-on 200 en lettres ?", options: ["Deux cent", "Deux cents", "Deux-cent", "Deux-cents"], answer: 1, explanation: "'Cent' prend un 's' quand il est multiplié et qu'il termine le nombre (Deux cents). S'il était suivi d'un autre nombre, il n'en prendrait pas (Deux cent trois)." },
+        { q: "Complétez : 'C'est la femme ... je t'ai parlé hier.'", options: ["à qui", "de qui", "dont", "laquelle"], answer: 2, explanation: "On parle 'de' quelqu'un. Le pronom relatif qui remplace 'de' est 'dont'." },
+        { q: "Trouvez la phrase mal orthographiée :", options: ["Elle s'est lavée.", "Elles se sont souri.", "Elle s'est coupée au doigt.", "Elles se sont parlées."], answer: 3, explanation: "Le verbe 'se parler' n'a jamais de COD (on parle À quelqu'un). Le participe passé est donc toujours invariable : 'Elles se sont parlé'." },
+        { q: "Complétez : 'Nous vous enverrons le document ...'", options: ["ci-joint", "ci-joints", "ci-jointe", "ci-jointes"], answer: 0, explanation: "Placé en début de phrase ou juste après le verbe sans déterminant devant le nom, 'ci-joint' est employé comme adverbe et reste invariable." },
+        { q: "Complétez : 'Ils marchent ... nus.'", options: ["pied", "pieds", "pied-", "pieds-"], answer: 1, explanation: "Placé après le nom, l'adjectif 'nu' s'accorde : des 'pieds nus'. (Mais 'nu-pieds' est invariable)." },
+        { q: "Choisissez la bonne orthographe :", options: ["Le développement", "Le developpement", "Le développemant", "Le develloppement"], answer: 0, explanation: "Le mot prend un accent aigu sur le 'e', deux 'p', et s'écrit 'ement'." },
+        { q: "Complétez : 'Il faut ... d'efforts pour réussir.'", options: ["davantage", "d'avantage", "d'avantages", "davantages"], answer: 0, explanation: "L'adverbe de quantité signifiant 'plus' s'écrit en un seul mot : davantage." },
+        { q: "Complétez : '... est ton opinion sur ce nouveau schéma ?'", options: ["Quel", "Quels", "Quelle", "Quelles"], answer: 2, explanation: "'Opinion' est un nom féminin singulier. L'adjectif interrogatif doit s'accorder : Quelle." },
+        { q: "Trouvez la bonne terminaison pour le conditionnel : 'Si j'avais le temps, je le ...'", options: ["ferai", "ferais", "ferait", "ferez"], answer: 1, explanation: "La première personne du conditionnel présent se termine par '-ais' (je ferais)." },
+        { q: "Trouvez la bonne terminaison pour le futur simple : 'Demain, je le ...'", options: ["ferai", "ferais", "ferait", "ferez"], answer: 0, explanation: "La première personne du futur simple se termine par '-ai' (je ferai)." },
+        { q: "Complétez : '... temps en temps, il vérifie le tableau électrique.'", options: ["De", "Du", "À", "En"], answer: 0, explanation: "La locution correcte est 'De temps en temps'." },
+        { q: "Quelle locution verbale est correcte ?", options: ["Je me rappelle de ce client.", "Je me souviens de ce client.", "Je m'en rappelle.", "Je m'en souviens de lui."], answer: 1, explanation: "On 'se souvient DE' quelqu'un, mais on 'se rappelle' (sans préposition) quelque chose. Donc 'Je me souviens de ce client' ou 'Je me rappelle ce client'." },
+        { q: "Complétez : 'Ils ... partis tôt ce matin.'", options: ["sont", "son", "ont", "on"], answer: 0, explanation: "Il s'agit du verbe être conjugué à la 3e personne du pluriel (ils sont partis)." },
+        { q: "Complétez : '... soient les raisons, nous interviendrons.'", options: ["Quels que", "Quel que", "Quelles que", "Quelle que"], answer: 2, explanation: "'Raisons' est un nom féminin pluriel. 'Quelles que' s'accorde en deux mots devant le verbe être." },
+        { q: "Choisissez la bonne forme de l'impératif : '...-y doucement !'", options: ["Vas", "Va", "Vont", "Aller"], answer: 0, explanation: "À l'impératif, 'aller' fait 'Va'. Mais suivi du pronom 'y', on ajoute un 's' pour la prononciation : 'Vas-y'." },
+        { q: "Complétez : 'Ces deux câbles se sont ... au cours de l'installation.'", options: ["emmêlé", "emmêlés", "emmêlée", "emmêlées"], answer: 1, explanation: "Les câbles (masculin pluriel) ont emmêlé quoi ? 'se' (eux-mêmes). Le COD est placé avant, on accorde : emmêlés." },
+        { q: "Complétez : 'Elle s'est ... les cheveux.'", options: ["coupé", "coupés", "coupée", "coupées"], answer: 0, explanation: "Elle a coupé quoi ? 'les cheveux' (COD placé après). Invariable." },
+        { q: "Trouvez la bonne proposition :", options: ["Il l'a envoyé un email.", "Il lui a envoyé un email.", "Il l'a envoyé à lui un email.", "Il lui a envoyé à lui un email."], answer: 1, explanation: "On envoie quelque chose À quelqu'un. Le pronom indirect est 'lui'." },
+        { q: "Quelle phrase est mal ponctuée ?", options: ["Bonjour, monsieur.", "Je suis, très heureux, de vous voir.", "Il a dit : « Je viens demain. »", "Si j'ai le temps, je viendrai."], answer: 1, explanation: "On ne sépare jamais le verbe (suis) de son attribut (heureux) par des virgules." },
+        { q: "Quel est le pluriel de 'un chef-d'œuvre' ?", options: ["des chefs-d'œuvre", "des chef-d'œuvres", "des chefs-d'œuvres", "des chef-d'œuvre"], answer: 0, explanation: "Dans ce mot composé (nom + préposition + nom), seul le premier nom prend la marque du pluriel : des chefs-d'œuvre." },
+        { q: "Complétez : 'Cette intervention est très ...'", options: ["exigeante", "éxigeante", "exigeante", "éxigente"], answer: 0, explanation: "L'adjectif s'écrit 'exigeant(e)' sans accent sur le 'e' initial, car le 'x' suivi d'une voyelle le rend inutile." },
+        { q: "Complétez : 'C'est le technicien auquel j'ai ... le schéma.'", options: ["donné", "donnés", "donnée", "données"], answer: 0, explanation: "J'ai donné quoi ? 'le schéma' (COD placé APRÈS le verbe). Invariable." },
+        { q: "Trouvez l'intrus parmi ces adverbes :", options: ["Galamment", "Évidemment", "Bruyament", "Violemment"], answer: 2, explanation: "Le mot s'écrit 'Bruyamment' avec deux 'm'." },
+        { q: "Complétez : 'J'ai vu ... personnes aujourd'hui.'", options: ["quelque", "quelques", "quelqu'", "quel qu'"], answer: 1, explanation: "Devant un nom pluriel, l'adjectif indéfini 'quelques' prend un 's'." },
+        { q: "Quel mot s'écrit avec un accent circonflexe ?", options: ["Boite", "Diplome", "Cote (rivage)", "Tache (travail)"], answer: 3, explanation: "Une 'tâche' (le travail) prend un accent circonflexe pour la différencier d'une 'tache' (la salissure). NOTE : Depuis la réforme de 1990, boîte et diplôme peuvent s'écrire sans, mais tâche le garde obligatoirement pour la distinction." },
+        { q: "Trouvez le mot correctement orthographié :", options: ["Une connection", "Une connexion", "Une conection", "Une connéxion"], answer: 1, explanation: "Contrairement à l'anglais (connection), en français le mot s'écrit 'connexion' avec un 'x'." },
+        { q: "Complétez : 'Ils se sont ... des heures au téléphone.'", options: ["parlé", "parlés", "parlées", "parlée"], answer: 0, explanation: "Le verbe 'se parler' est transitif indirect (on parle À quelqu'un). Le participe passé est toujours invariable." },
+        { q: "Quel est le pluriel de 'un laissez-passer' ?", options: ["des laissez-passer", "des laissez-passers", "des laissés-passer", "des laissés-passés"], answer: 0, explanation: "Un mot composé de deux verbes (ou verbe + adverbe) est totalement invariable au pluriel : des laissez-passer." },
+        { q: "Complétez : 'J'ai oublié ... je devais te parler.'", options: ["ce que", "ce dont", "ce à quoi", "ce qui"], answer: 1, explanation: "Le verbe est 'parler DE quelque chose'. Le pronom qui inclut 'de' est 'dont' -> ce dont." },
+        { q: "Complétez : 'Elles se sont ... enfuies.'", options: ["tout", "toute", "toutes", "touts"], answer: 2, explanation: "Exception : l'adverbe 'tout' s'accorde devant un adjectif féminin commençant par une voyelle si... Ah non, le mot 'enfuies' commence par une voyelle ! La règle dit qu'il reste invariable. MAIS ici 'tout' est un adverbe signifiant 'entièrement'. En fait, la règle dit : il s'accorde devant une consonne ou h aspiré (toute honteuse). Devant une voyelle, il reste INVARIABLE. L'option correcte est 'tout'.", answer: 0, explanation: "L'adverbe 'tout' s'accorde (toute, toutes) SEULEMENT devant un adjectif féminin commençant par une consonne ou un 'h' aspiré. Devant une voyelle (comme enfuies), il reste INVARIABLE : Elles se sont tout enfuies." },
+        { q: "Trouvez la forme correcte :", options: ["Après qu'il soit parti", "Après qu'il est parti", "Après qu'il fut parti", "Après qu'il sera parti"], answer: 1, explanation: "Contrairement à 'avant que' (qui prend le subjonctif), 'après que' est suivi de l'indicatif car l'action est déjà réalisée et certaine : Après qu'il est parti." },
+        { q: "Complétez : 'C'est la solution ... j'ai pensé.'", options: ["à laquelle", "à qui", "dont", "que"], answer: 0, explanation: "On 'pense À' quelque chose. Le pronom relatif composé féminin singulier est 'à laquelle'." }
+    ];
+
+    // Correction of question 48 due to script constraint above to ensure accurate array matching
+    questions[47] = { q: "Complétez : 'Elles étaient ... heureuses de la nouvelle.'", options: ["tout", "toutes", "toute", "touts"], answer: 0, explanation: "L'adverbe 'tout' (entièrement) reste invariable devant un adjectif féminin commençant par une voyelle ou un 'h' muet (heureuses) : Elles étaient tout heureuses." };
+
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 3000; 
+    let timerInterval;
+    let selectedOptionIndex = null;
+    let isValidated = false; 
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        shuffleArray(questions);
+        loadQuestion();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                endTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if(timeLeft < 300) { 
+            document.getElementById('timer').style.color = 'var(--wrong-color)';
+        }
+    }
+
+    function loadQuestion() {
+        selectedOptionIndex = null;
+        isValidated = false;
+        document.getElementById('action-btn').disabled = true;
+        document.getElementById('action-btn').innerText = "Valider la réponse";
+        document.getElementById('explanation-box').classList.add('hidden'); 
+        
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = ''; 
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, btnElement) {
+        if (isValidated) return; 
+
+        selectedOptionIndex = index;
+        
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        
+        btnElement.classList.add('selected');
+        document.getElementById('action-btn').disabled = false;
+    }
+
+    function handleAction() {
+        if (!isValidated) {
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.answer;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true; 
+                if (index === correctIndex) {
+                    btn.classList.add('correct-ans'); 
+                } else if (index === selectedOptionIndex) {
+                    btn.classList.add('wrong-ans'); 
+                }
+            });
+
+            if (selectedOptionIndex === correctIndex) {
+                score++;
+            }
+
+            const explanationBox = document.getElementById('explanation-box');
+            explanationBox.innerText = `Règle d'or : ${q.explanation}`;
+            explanationBox.classList.remove('hidden');
+
+            document.getElementById('action-btn').innerText = "Question suivante";
+            isValidated = true;
+            
+        } else {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endTest();
+            }
+        }
+    }
+
+    function endTest() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        const percentage = Math.round((score / questions.length) * 100);
+        const scoreCircle = document.getElementById('final-score');
+        scoreCircle.innerText = `${percentage}%`;
+
+        let feedback = "";
+        if (percentage >= 80) {
+            feedback = "Performance remarquable ! Les règles subtiles du français n'ont plus de secret pour toi. Un atout décisif pour tes futurs rapports de stage et d'intervention.";
+            scoreCircle.style.borderColor = "var(--correct-color)";
+            scoreCircle.style.color = "var(--correct-color)";
+        } else if (percentage >= 50) {
+            feedback = "Très bon travail de mémorisation. Repère bien les explications des fautes d'accords pour atteindre la perfection.";
+            scoreCircle.style.borderColor = "#ff9800";
+            scoreCircle.style.color = "#ff9800";
+        } else {
+            feedback = "La grammaire française est truffée d'exceptions. Profite de ces erreurs pour assimiler les règles fondamentales (participes passés, subjonctif) !";
+            scoreCircle.style.borderColor = "var(--wrong-color)";
+            scoreCircle.style.color = "var(--wrong-color)";
+        }
+
+        document.getElementById('feedback-msg').innerText = `Tu as réussi ${score} questions sur ${questions.length}. ${feedback}`;
+    }
+</script>
+
+</body>
+</html>
