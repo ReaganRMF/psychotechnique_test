@@ -434,7 +434,16 @@
         }
 
         document.getElementById('feedback-msg').innerText = `Tu as obtenu ${score} bonnes réponses sur ${questions.length}. ${feedback}`;
+  
     }
+
+    const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html", "grammaaire.html", "tics-langage.html", "electrotechnique.html", "entreprise.html","psychologie.html",];
+    function goToRandomTest() {
+        const choice = tests[Math.floor(Math.random() * tests.length)];
+        window.location.href = choice;
+    }
+
+    
 </script>
 
 </body>

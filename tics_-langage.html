@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulateur SNEL - Mauvaises Pratiques & Pièges (Module 10)</title>
     <style>
         :root {
-            --primary-color: #1a4b77; /* Bleu institutionnel */
+            --primary-color: #1a4b77;
+            /* Bleu institutionnel */
             --bg-color: #f4f7f9;
             --text-color: #2c3e50;
             --card-bg: #ffffff;
@@ -127,8 +129,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .btn {
@@ -191,208 +200,217 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div id="start-screen">
-        <h1 style="text-align: center; color: var(--primary-color);">Module 10 : Chasse aux Mauvaises Pratiques</h1>
-        <p>Pléonasmes, anglicismes, faux-amis... La langue de tous les jours est remplie d'expressions fautives. Ce test de <strong>20 questions</strong> te permettra d'épurer ton vocabulaire professionnel.</p>
-        <p>Temps alloué : <strong>20 minutes</strong>.</p>
-        <button class="btn" onclick="startTest()">Lancer l'inspection</button>
-    </div>
-
-    <div id="quiz-screen" class="hidden">
-        <div class="header">
-            <span id="question-counter">Question 1 / 20</span>
-            <span class="timer" id="timer">20:00</span>
+    <div class="container">
+        <div id="start-screen">
+            <h1 style="text-align: center; color: var(--primary-color);">Module 10 : Chasse aux Mauvaises Pratiques</h1>
+            <p>Pléonasmes, anglicismes, faux-amis... La langue de tous les jours est remplie d'expressions fautives. Ce
+                test de <strong>20 questions</strong> te permettra d'épurer ton vocabulaire professionnel.</p>
+            <p>Temps alloué : <strong>20 minutes</strong>.</p>
+            <button class="btn" onclick="startTest()">Lancer l'inspection</button>
         </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="progress-bar"></div>
+
+        <div id="quiz-screen" class="hidden">
+            <div class="header">
+                <span id="question-counter">Question 1 / 20</span>
+                <span class="timer" id="timer">20:00</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="question-text" id="question-text">Chargement de la question...</div>
+
+            <div class="options-grid" id="options-grid"></div>
+
+            <div id="explanation-box" class="explanation-box hidden"></div>
+
+            <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
         </div>
-        
-        <div class="question-text" id="question-text">Chargement de la question...</div>
-        
-        <div class="options-grid" id="options-grid"></div>
 
-        <div id="explanation-box" class="explanation-box hidden"></div>
-
-        <button class="btn" id="action-btn" onclick="handleAction()" disabled>Valider la réponse</button>
+        <div id="result-screen" class="result-screen hidden">
+            <h2>Bilan de l'Inspection Linguistique</h2>
+            <p>Voici ton score pour cette session de nettoyage :</p>
+            <div class="score-circle" id="final-score">0%</div>
+            <p id="feedback-msg"></p>
+            <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Recommencer</button>
+        </div>
     </div>
 
-    <div id="result-screen" class="result-screen hidden">
-        <h2>Bilan de l'Inspection Linguistique</h2>
-        <p>Voici ton score pour cette session de nettoyage :</p>
-        <div class="score-circle" id="final-score">0%</div>
-        <p id="feedback-msg"></p>
-        <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Recommencer</button>
-    </div>
-</div>
+    <script>
+        const questions = [
+            { q: "Quelle est la formulation correcte pour parler d'un choix entre deux solutions ?", options: ["Nous avons une autre alternative.", "Nous n'avons pas d'autre alternative.", "L'alternative est la suivante : réparer ou remplacer.", "Il y a trois alternatives possibles."], answer: 2, explanation: "Le mot 'alternative' désigne DEUX propositions qui s'excluent mutuellement (un choix entre A et B). Dire 'une autre alternative' ou 'deux alternatives' est un pléonasme ou un non-sens." },
+            { q: "Identifiez l'expression fautive (anglicisme) :", options: ["Cette procédure fait sens.", "Cette procédure a du sens.", "Cette procédure est logique.", "Cette procédure est sensée."], answer: 0, explanation: "L'expression 'faire sens' est un calque direct de l'anglais 'to make sense'. En français, on dit 'avoir du sens'." },
+            { q: "Quelle phrase contient un pléonasme ?", options: ["Il a réservé sa place hier.", "Nous devons anticiper les pannes.", "Il faut prévoir d'avance le matériel.", "Ils ont collaboré sur ce projet."], answer: 2, explanation: "'Prévoir' signifie déjà 'voir à l'avance'. 'Prévoir d'avance' est un pléonasme lourd." },
+            { q: "Laquelle de ces phrases est correcte ?", options: ["Il a initié le déploiement du réseau.", "Il a commencé le déploiement du réseau.", "Il a été nominatif à ce poste.", "Je suis en charge de ce secteur."], answer: 1, explanation: "'Initier' quelqu'un signifie lui apprendre les bases d'un savoir. L'utiliser pour dire 'commencer' ou 'lancer' un projet est un anglicisme (to initiate)." },
+            { q: "Identifiez le faux-ami : 'Nous utilisons des outils ...'", options: ["Digitaux", "Numériques", "Informatiques", "Électroniques"], answer: 1, explanation: "En français, 'digital' se rapporte aux doigts (empreintes digitales). Pour parler des technologies (0 et 1), le mot correct est 'numérique'. L'usage de 'digital' est un anglicisme." },
+            { q: "Quelle phrase est grammaticalement correcte ?", options: ["Je vais postuler pour ce poste d'électricien.", "Je vais postuler à ce poste d'électricien.", "Je vais postuler ce poste d'électricien.", "Je vais appliquer pour ce poste."], answer: 2, explanation: "Le verbe postuler est transitif direct : on 'postule un emploi' (et non pour ou à). 'Appliquer' est un anglicisme (to apply)." },
+            { q: "Trouvez l'erreur (pléonasme) parmi ces expressions :", options: ["Ajouter en plus", "Un accord mutuel", "Reporter à plus tard", "Toutes ces réponses sont des pléonasmes"], answer: 3, explanation: "Ajouter signifie déjà mettre en plus ; un accord implique la mutualité ; reporter signifie repousser à plus tard. Ce sont tous des pléonasmes." },
+            { q: "Laquelle de ces phrases est parfaitement correcte ?", options: ["Malgré qu'il pleuve, l'intervention continue.", "Bien qu'il pleut, l'intervention continue.", "Malgré la pluie, l'intervention continue.", "Malgré qu'il ait plu, l'intervention continue."], answer: 2, explanation: "L'expression 'malgré que' est considérée comme très familière ou incorrecte (sauf dans 'malgré que j'en aie'). On utilise 'Bien que + subjonctif' ou 'Malgré + nom'." },
+            { q: "Choisissez la bonne formulation :", options: ["L'hypothèse s'est avérée vraie.", "L'hypothèse s'est avérée.", "L'hypothèse s'est avérée fausse.", "Il s'avère que l'hypothèse est vraie."], answer: 1, explanation: "'S'avérer' vient du latin 'verus' (vrai) et signifie 'se révéler vrai'. Dire 's'avérer vrai' est donc un pléonasme, et 's'avérer faux' est une absurdité." },
+            { q: "Comment faut-il corriger : 'Suite à votre mail, je vous confirme la coupure.' ?", options: ["Il n'y a rien à corriger.", "Pour faire suite à votre mail...", "En réponse à votre mail...", "Faisant suite de votre mail..."], answer: 2, explanation: "L'expression 'suite à' relève du langage commercial lourd, souvent considéré comme incorrect. Les puristes recommandent 'À la suite de' ou 'En réponse à'." },
+            { q: "Quelle est la bonne manière de s'exprimer ?", options: ["C'est de cela dont je voulais parler.", "C'est de cela que je voulais parler.", "C'est de ça dont je parle.", "C'est de quoi je voulais parler."], answer: 1, explanation: "'Dont' contient déjà la préposition 'de'. Dire 'C'est DE cela DONT...' est un pléonasme syntaxique. On dit 'C'est cela DONT...' ou 'C'est DE cela QUE...'." },
+            { q: "Identifiez l'expression incorrecte (anglicisme) :", options: ["Il est responsable du projet.", "Il est en charge du projet.", "Il s'occupe du projet.", "Il a la charge du projet."], answer: 1, explanation: "'Être en charge de' est une traduction littérale de 'to be in charge of'. En français, un dossier est 'à la charge de' quelqu'un, ou la personne 'est chargée du' dossier." },
+            { q: "Quelle expression contient un barbarisme fréquent ?", options: ["Pallier le manque de matériel.", "Résoudre le problème.", "Solutionner le problème.", "Remédier au problème."], answer: 2, explanation: "'Solutionner' est souvent critiqué. Le verbe correct et élégant est 'Résoudre'." },
+            { q: "Quelle phrase utilise correctement le mot 'conséquent' ?", options: ["Il a fait une erreur conséquente.", "Le budget alloué est conséquent.", "Un homme logique et conséquent dans ses actes.", "Le retard de livraison est conséquent."], answer: 2, explanation: "En bon français, 'conséquent' signifie 'logique, qui agit avec esprit de suite'. L'utiliser pour dire 'important' ou 'volumineux' est un abus de langage courant." },
+            { q: "Identifiez le bon usage :", options: ["Je suis confus par ces explications compliquées.", "Je suis perplexe face à ces explications compliquées.", "Cette documentation est confuse pour moi.", "Je me sens confus."], answer: 1, explanation: "En français, 'être confus' signifie 'être honteux, désolé' (ex: je suis confus de mon retard). Si l'on ne comprend pas, on est 'perplexe' (l'anglicisme 'confused' crée cette erreur)." },
+            { q: "Quelle est la faute dans 'Au jour d'aujourd'hui, le réseau est stable' ?", options: ["Aucune faute.", "C'est un double pléonasme.", "C'est un barbarisme.", "C'est un anglicisme."], answer: 1, explanation: "'Hui' en ancien français signifie 'ce jour'. 'Aujourd'hui' signifie 'au jour de ce jour'. Donc 'Au jour d'aujourd'hui' signifie 'Au jour du jour de ce jour' ! Un pléonasme massif." },
+            { q: "Trouvez la phrase correcte :", options: ["Il s'est basé sur le schéma électrique.", "Il s'est fondé sur le schéma électrique.", "C'est basé sur des faits réels.", "Son rapport est basé sur les données de terrain."], answer: 1, explanation: "On 'fonde' une opinion, un rapport ou un argument sur des faits. 'Se baser sur' est un anglicisme (to be based on). On base un bâtiment (fondations), on fonde un raisonnement." },
+            { q: "Que devrait-on dire à la place de 'opportunité' dans ce contexte : 'J'ai eu l'opportunité de le rencontrer' ?", options: ["La chance", "L'occasion", "L'alternative", "Le privilège"], answer: 1, explanation: "Une 'opportunité' est le caractère de ce qui est opportun (le bon moment). Avoir 'l'occasion' de faire quelque chose est la traduction correcte de 'opportunity'." },
+            { q: "Lequel de ces mots est souvent employé à tort pour dire 'c'est-à-dire' ou 'et même' ?", options: ["Or", "Voire", "Voire même", "Donc"], answer: 2, explanation: "'Voire' signifie déjà 'et même' (Il fera 30 degrés, voire 35). L'expression 'voire même' est donc un pléonasme courant qu'il faut bannir." },
+            { q: "Identifiez l'erreur :", options: ["Nous allons clôturer le compte.", "Nous allons clôturer le terrain.", "Nous allons clore le débat.", "Nous allons conclure la réunion."], answer: 0, explanation: "'Clôturer' s'applique à un terrain (mettre une clôture). Pour un compte bancaire, une réunion ou un débat, on devrait utiliser 'clore' ou 'conclure'." }
+        ];
 
-<script>
-    const questions = [
-        { q: "Quelle est la formulation correcte pour parler d'un choix entre deux solutions ?", options: ["Nous avons une autre alternative.", "Nous n'avons pas d'autre alternative.", "L'alternative est la suivante : réparer ou remplacer.", "Il y a trois alternatives possibles."], answer: 2, explanation: "Le mot 'alternative' désigne DEUX propositions qui s'excluent mutuellement (un choix entre A et B). Dire 'une autre alternative' ou 'deux alternatives' est un pléonasme ou un non-sens." },
-        { q: "Identifiez l'expression fautive (anglicisme) :", options: ["Cette procédure fait sens.", "Cette procédure a du sens.", "Cette procédure est logique.", "Cette procédure est sensée."], answer: 0, explanation: "L'expression 'faire sens' est un calque direct de l'anglais 'to make sense'. En français, on dit 'avoir du sens'." },
-        { q: "Quelle phrase contient un pléonasme ?", options: ["Il a réservé sa place hier.", "Nous devons anticiper les pannes.", "Il faut prévoir d'avance le matériel.", "Ils ont collaboré sur ce projet."], answer: 2, explanation: "'Prévoir' signifie déjà 'voir à l'avance'. 'Prévoir d'avance' est un pléonasme lourd." },
-        { q: "Laquelle de ces phrases est correcte ?", options: ["Il a initié le déploiement du réseau.", "Il a commencé le déploiement du réseau.", "Il a été nominatif à ce poste.", "Je suis en charge de ce secteur."], answer: 1, explanation: "'Initier' quelqu'un signifie lui apprendre les bases d'un savoir. L'utiliser pour dire 'commencer' ou 'lancer' un projet est un anglicisme (to initiate)." },
-        { q: "Identifiez le faux-ami : 'Nous utilisons des outils ...'", options: ["Digitaux", "Numériques", "Informatiques", "Électroniques"], answer: 1, explanation: "En français, 'digital' se rapporte aux doigts (empreintes digitales). Pour parler des technologies (0 et 1), le mot correct est 'numérique'. L'usage de 'digital' est un anglicisme." },
-        { q: "Quelle phrase est grammaticalement correcte ?", options: ["Je vais postuler pour ce poste d'électricien.", "Je vais postuler à ce poste d'électricien.", "Je vais postuler ce poste d'électricien.", "Je vais appliquer pour ce poste."], answer: 2, explanation: "Le verbe postuler est transitif direct : on 'postule un emploi' (et non pour ou à). 'Appliquer' est un anglicisme (to apply)." },
-        { q: "Trouvez l'erreur (pléonasme) parmi ces expressions :", options: ["Ajouter en plus", "Un accord mutuel", "Reporter à plus tard", "Toutes ces réponses sont des pléonasmes"], answer: 3, explanation: "Ajouter signifie déjà mettre en plus ; un accord implique la mutualité ; reporter signifie repousser à plus tard. Ce sont tous des pléonasmes." },
-        { q: "Laquelle de ces phrases est parfaitement correcte ?", options: ["Malgré qu'il pleuve, l'intervention continue.", "Bien qu'il pleut, l'intervention continue.", "Malgré la pluie, l'intervention continue.", "Malgré qu'il ait plu, l'intervention continue."], answer: 2, explanation: "L'expression 'malgré que' est considérée comme très familière ou incorrecte (sauf dans 'malgré que j'en aie'). On utilise 'Bien que + subjonctif' ou 'Malgré + nom'." },
-        { q: "Choisissez la bonne formulation :", options: ["L'hypothèse s'est avérée vraie.", "L'hypothèse s'est avérée.", "L'hypothèse s'est avérée fausse.", "Il s'avère que l'hypothèse est vraie."], answer: 1, explanation: "'S'avérer' vient du latin 'verus' (vrai) et signifie 'se révéler vrai'. Dire 's'avérer vrai' est donc un pléonasme, et 's'avérer faux' est une absurdité." },
-        { q: "Comment faut-il corriger : 'Suite à votre mail, je vous confirme la coupure.' ?", options: ["Il n'y a rien à corriger.", "Pour faire suite à votre mail...", "En réponse à votre mail...", "Faisant suite de votre mail..."], answer: 2, explanation: "L'expression 'suite à' relève du langage commercial lourd, souvent considéré comme incorrect. Les puristes recommandent 'À la suite de' ou 'En réponse à'." },
-        { q: "Quelle est la bonne manière de s'exprimer ?", options: ["C'est de cela dont je voulais parler.", "C'est de cela que je voulais parler.", "C'est de ça dont je parle.", "C'est de quoi je voulais parler."], answer: 1, explanation: "'Dont' contient déjà la préposition 'de'. Dire 'C'est DE cela DONT...' est un pléonasme syntaxique. On dit 'C'est cela DONT...' ou 'C'est DE cela QUE...'." },
-        { q: "Identifiez l'expression incorrecte (anglicisme) :", options: ["Il est responsable du projet.", "Il est en charge du projet.", "Il s'occupe du projet.", "Il a la charge du projet."], answer: 1, explanation: "'Être en charge de' est une traduction littérale de 'to be in charge of'. En français, un dossier est 'à la charge de' quelqu'un, ou la personne 'est chargée du' dossier." },
-        { q: "Quelle expression contient un barbarisme fréquent ?", options: ["Pallier le manque de matériel.", "Résoudre le problème.", "Solutionner le problème.", "Remédier au problème."], answer: 2, explanation: "'Solutionner' est souvent critiqué. Le verbe correct et élégant est 'Résoudre'." },
-        { q: "Quelle phrase utilise correctement le mot 'conséquent' ?", options: ["Il a fait une erreur conséquente.", "Le budget alloué est conséquent.", "Un homme logique et conséquent dans ses actes.", "Le retard de livraison est conséquent."], answer: 2, explanation: "En bon français, 'conséquent' signifie 'logique, qui agit avec esprit de suite'. L'utiliser pour dire 'important' ou 'volumineux' est un abus de langage courant." },
-        { q: "Identifiez le bon usage :", options: ["Je suis confus par ces explications compliquées.", "Je suis perplexe face à ces explications compliquées.", "Cette documentation est confuse pour moi.", "Je me sens confus."], answer: 1, explanation: "En français, 'être confus' signifie 'être honteux, désolé' (ex: je suis confus de mon retard). Si l'on ne comprend pas, on est 'perplexe' (l'anglicisme 'confused' crée cette erreur)." },
-        { q: "Quelle est la faute dans 'Au jour d'aujourd'hui, le réseau est stable' ?", options: ["Aucune faute.", "C'est un double pléonasme.", "C'est un barbarisme.", "C'est un anglicisme."], answer: 1, explanation: "'Hui' en ancien français signifie 'ce jour'. 'Aujourd'hui' signifie 'au jour de ce jour'. Donc 'Au jour d'aujourd'hui' signifie 'Au jour du jour de ce jour' ! Un pléonasme massif." },
-        { q: "Trouvez la phrase correcte :", options: ["Il s'est basé sur le schéma électrique.", "Il s'est fondé sur le schéma électrique.", "C'est basé sur des faits réels.", "Son rapport est basé sur les données de terrain."], answer: 1, explanation: "On 'fonde' une opinion, un rapport ou un argument sur des faits. 'Se baser sur' est un anglicisme (to be based on). On base un bâtiment (fondations), on fonde un raisonnement." },
-        { q: "Que devrait-on dire à la place de 'opportunité' dans ce contexte : 'J'ai eu l'opportunité de le rencontrer' ?", options: ["La chance", "L'occasion", "L'alternative", "Le privilège"], answer: 1, explanation: "Une 'opportunité' est le caractère de ce qui est opportun (le bon moment). Avoir 'l'occasion' de faire quelque chose est la traduction correcte de 'opportunity'." },
-        { q: "Lequel de ces mots est souvent employé à tort pour dire 'c'est-à-dire' ou 'et même' ?", options: ["Or", "Voire", "Voire même", "Donc"], answer: 2, explanation: "'Voire' signifie déjà 'et même' (Il fera 30 degrés, voire 35). L'expression 'voire même' est donc un pléonasme courant qu'il faut bannir." },
-        { q: "Identifiez l'erreur :", options: ["Nous allons clôturer le compte.", "Nous allons clôturer le terrain.", "Nous allons clore le débat.", "Nous allons conclure la réunion."], answer: 0, explanation: "'Clôturer' s'applique à un terrain (mettre une clôture). Pour un compte bancaire, une réunion ou un débat, on devrait utiliser 'clore' ou 'conclure'." }
-    ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 1200; // 20 minutes
+        let timerInterval;
+        let selectedOptionIndex = null;
+        let isValidated = false;
 
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let timeLeft = 1200; // 20 minutes
-    let timerInterval;
-    let selectedOptionIndex = null;
-    let isValidated = false;
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    function startTest() {
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('quiz-screen').classList.remove('hidden');
-        shuffleArray(questions);
-        loadQuestion();
-        
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-            if (timeLeft <= 0) {
-                endTest();
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        document.getElementById('timer').innerText = 
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        if(timeLeft < 180) { 
-            document.getElementById('timer').style.color = 'var(--wrong-color)';
         }
-    }
 
-    function loadQuestion() {
-        selectedOptionIndex = null;
-        isValidated = false;
-        document.getElementById('action-btn').disabled = true;
-        document.getElementById('action-btn').innerText = "Valider la réponse";
-        document.getElementById('explanation-box').classList.add('hidden');
-        
-        const q = questions[currentQuestionIndex];
-        document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
-        document.getElementById('question-text').innerText = q.q;
-        
-        const progress = ((currentQuestionIndex) / questions.length) * 100;
-        document.getElementById('progress-bar').style.width = `${progress}%`;
+        function startTest() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            shuffleArray(questions);
+            loadQuestion();
 
-        const optionsGrid = document.getElementById('options-grid');
-        optionsGrid.innerHTML = ''; 
-
-        q.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => selectOption(index, btn);
-            optionsGrid.appendChild(btn);
-        });
-    }
-
-    function selectOption(index, btnElement) {
-        if (isValidated) return;
-
-        selectedOptionIndex = index;
-        
-        const buttons = document.querySelectorAll('.option-btn');
-        buttons.forEach(btn => btn.classList.remove('selected'));
-        
-        btnElement.classList.add('selected');
-        document.getElementById('action-btn').disabled = false;
-    }
-
-    function handleAction() {
-        if (!isValidated) {
-            const q = questions[currentQuestionIndex];
-            const correctIndex = q.answer;
-            const buttons = document.querySelectorAll('.option-btn');
-            
-            buttons.forEach((btn, index) => {
-                btn.disabled = true;
-                if (index === correctIndex) {
-                    btn.classList.add('correct-ans');
-                } else if (index === selectedOptionIndex) {
-                    btn.classList.add('wrong-ans');
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    endTest();
                 }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').innerText =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft < 180) {
+                document.getElementById('timer').style.color = 'var(--wrong-color)';
+            }
+        }
+
+        function loadQuestion() {
+            selectedOptionIndex = null;
+            isValidated = false;
+            document.getElementById('action-btn').disabled = true;
+            document.getElementById('action-btn').innerText = "Valider la réponse";
+            document.getElementById('explanation-box').classList.add('hidden');
+
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optionsGrid.appendChild(btn);
             });
+        }
 
-            if (selectedOptionIndex === correctIndex) {
-                score++;
-            }
+        function selectOption(index, btnElement) {
+            if (isValidated) return;
 
-            const explanationBox = document.getElementById('explanation-box');
-            explanationBox.innerText = `L'explication : ${q.explanation}`;
-            explanationBox.classList.remove('hidden');
+            selectedOptionIndex = index;
 
-            document.getElementById('action-btn').innerText = "Question suivante";
-            isValidated = true;
-            
-        } else {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            btnElement.classList.add('selected');
+            document.getElementById('action-btn').disabled = false;
+        }
+
+        function handleAction() {
+            if (!isValidated) {
+                const q = questions[currentQuestionIndex];
+                const correctIndex = q.answer;
+                const buttons = document.querySelectorAll('.option-btn');
+
+                buttons.forEach((btn, index) => {
+                    btn.disabled = true;
+                    if (index === correctIndex) {
+                        btn.classList.add('correct-ans');
+                    } else if (index === selectedOptionIndex) {
+                        btn.classList.add('wrong-ans');
+                    }
+                });
+
+                if (selectedOptionIndex === correctIndex) {
+                    score++;
+                }
+
+                const explanationBox = document.getElementById('explanation-box');
+                explanationBox.innerText = `L'explication : ${q.explanation}`;
+                explanationBox.classList.remove('hidden');
+
+                document.getElementById('action-btn').innerText = "Question suivante";
+                isValidated = true;
+
             } else {
-                endTest();
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    endTest();
+                }
             }
         }
-    }
 
-    function endTest() {
-        clearInterval(timerInterval);
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
+        function endTest() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
 
-        const percentage = Math.round((score / questions.length) * 100);
-        const scoreCircle = document.getElementById('final-score');
-        scoreCircle.innerText = `${percentage}%`;
+            const percentage = Math.round((score / questions.length) * 100);
+            const scoreCircle = document.getElementById('final-score');
+            scoreCircle.innerText = `${percentage}%`;
 
-        let feedback = "";
-        if (percentage >= 80) {
-            feedback = "Niveau d'excellence atteint ! Ton expression sera nette, précise, et digne d'un véritable professionnel technique.";
-            scoreCircle.style.borderColor = "var(--correct-color)";
-            scoreCircle.style.color = "var(--correct-color)";
-        } else if (percentage >= 50) {
-            feedback = "Bonnes bases, mais quelques tics de langage résistent encore. Ce vocabulaire épuré te sera d'une grande aide sur le terrain.";
-            scoreCircle.style.borderColor = "#f57c00";
-            scoreCircle.style.color = "#f57c00";
-        } else {
-            feedback = "Beaucoup de pléonasmes et d'anglicismes sont ancrés dans le langage courant. Relis bien les explications pour ne plus te faire piéger !";
-            scoreCircle.style.borderColor = "var(--wrong-color)";
-            scoreCircle.style.color = "var(--wrong-color)";
+            let feedback = "";
+            if (percentage >= 80) {
+                feedback = "Niveau d'excellence atteint ! Ton expression sera nette, précise, et digne d'un véritable professionnel technique.";
+                scoreCircle.style.borderColor = "var(--correct-color)";
+                scoreCircle.style.color = "var(--correct-color)";
+            } else if (percentage >= 50) {
+                feedback = "Bonnes bases, mais quelques tics de langage résistent encore. Ce vocabulaire épuré te sera d'une grande aide sur le terrain.";
+                scoreCircle.style.borderColor = "#f57c00";
+                scoreCircle.style.color = "#f57c00";
+            } else {
+                feedback = "Beaucoup de pléonasmes et d'anglicismes sont ancrés dans le langage courant. Relis bien les explications pour ne plus te faire piéger !";
+                scoreCircle.style.borderColor = "var(--wrong-color)";
+                scoreCircle.style.color = "var(--wrong-color)";
+            }
+
+            document.getElementById('feedback-msg').innerText = `Tu as réussi ${score} questions sur ${questions.length}. ${feedback}`;
+
+            const tests = ["simulateur-psychotechnique.html", "session-entrainement-2.html", "francais-logique-maths.html", "electricien-distribution-reseau.html", "niveau-5.html", "grammaire.html", "tics-langage.html"];
+            function goToRandomTest() {
+                const choice = tests[Math.floor(Math.random() * tests.length)];
+                window.location.href = choice;
+            }
         }
-
-        document.getElementById('feedback-msg').innerText = `Tu as réussi ${score} questions sur ${questions.length}. ${feedback}`;
-    }
-</script>
+    </script>
 
 </body>
+
 </html>
